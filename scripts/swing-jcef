@@ -1,0 +1,7 @@
+#!/bin/bash
+
+DIR=$(dirname $0)
+CMD="$DIR/swing-jcef.sh"
+CLASS="de.topobyte.jcef.MainFrame"
+
+exec "$CMD" "$CLASS" "$@"

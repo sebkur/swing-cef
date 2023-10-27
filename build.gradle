@@ -1,0 +1,60 @@
+wrapper {
+    gradleVersion = '7.6.3'
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+group = pGroup
+version = pVersion
+
+if (project.hasProperty("topobyte")) {
+    apply from: 'file:///' + System.getProperty("user.home") \
+        + '/.gradle/topobyte.gradle'
+}
+
+repositories {
+    maven {
+        url 'https://mvn.topobyte.de'
+    }
+    maven {
+        url 'https://mvn.slimjars.com'
+    }
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    implementation 'me.friwi:jcefmaven:110.0.25.1'
+    implementation 'me.friwi:jcef-natives-linux-amd64:jcef-87476e9+cef-110.0.25+g75b1c96+chromium-110.0.5481.78'
+    // this version doesn't work on my Linux system, requires newer libc?
+    //implementation 'me.friwi:jcefmaven:116.0.19'
+    //implementation 'me.friwi:jcef-natives-linux-amd64:jcef-37f25dc+cef-116.0.19+gc6a20bc+chromium-116.0.5845.141'
+    implementation 'de.topobyte:shared-preferences:0.1.0'
+    implementation 'de.topobyte:swing-utils:0.0.13'
+}
+
+task copyJars(type: Copy) {
+    into "$buildDir/lib-run"
+    from jar
+}
+
+task copyDeps(type: Copy) {
+    into "$buildDir/lib-run"
+    from configurations.runtimeClasspath
+}
+
+task createRuntime(dependsOn: [copyJars, copyDeps]) {
+    description 'Setup the execution environment for the main scripts'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
