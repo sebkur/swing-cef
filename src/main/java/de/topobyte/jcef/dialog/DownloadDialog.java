@@ -29,7 +29,7 @@ import org.cef.handler.CefDownloadHandler;
 public class DownloadDialog extends JDialog implements CefDownloadHandler
 {
 	private final Frame owner_;
-	private final Map<Integer, DownloadObject> downloadObjects_ = new HashMap<Integer, DownloadObject>();
+	private final Map<Integer, DownloadObject> downloadObjects_ = new HashMap<>();
 	private final JPanel downloadPanel_ = new JPanel();
 	private final DownloadDialog dialog_;
 

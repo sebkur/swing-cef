@@ -22,7 +22,7 @@ import de.topobyte.jcef.dialog.ShowTextDialog;
 public class ContextMenuHandler implements CefContextMenuHandler
 {
 	private final Frame owner_;
-	private Map<Integer, String> suggestions_ = new HashMap<Integer, String>();
+	private Map<Integer, String> suggestions_ = new HashMap<>();
 
 	public ContextMenuHandler(Frame owner)
 	{
@@ -48,7 +48,7 @@ public class ContextMenuHandler implements CefContextMenuHandler
 			model.addItem(MenuId.MENU_ID_USER_FIRST, "Download Image...");
 		model.addItem(MenuId.MENU_ID_VIEW_SOURCE, "View Source...");
 
-		Vector<String> suggestions = new Vector<String>();
+		Vector<String> suggestions = new Vector<>();
 		params.getDictionarySuggestions(suggestions);
 
 		// Spell checking menu

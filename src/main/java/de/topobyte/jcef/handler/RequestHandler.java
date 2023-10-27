@@ -44,7 +44,7 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 	{
 		CefPostData postData = request.getPostData();
 		if (postData != null) {
-			Vector<CefPostDataElement> elements = new Vector<CefPostDataElement>();
+			Vector<CefPostDataElement> elements = new Vector<>();
 			postData.getElements(elements);
 			for (CefPostDataElement el : elements) {
 				int numBytes = el.getBytesCount();
@@ -104,7 +104,7 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 			CefPostData postData = request.getPostData();
 			boolean sendAsGet = false;
 			if (postData != null) {
-				Vector<CefPostDataElement> elements = new Vector<CefPostDataElement>();
+				Vector<CefPostDataElement> elements = new Vector<>();
 				postData.getElements(elements);
 				for (CefPostDataElement el : elements) {
 					int numBytes = el.getBytesCount();
