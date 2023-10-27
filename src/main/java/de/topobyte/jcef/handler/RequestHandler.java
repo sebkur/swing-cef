@@ -48,12 +48,14 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 			postData.getElements(elements);
 			for (CefPostDataElement el : elements) {
 				int numBytes = el.getBytesCount();
-				if (numBytes <= 0)
+				if (numBytes <= 0) {
 					continue;
+				}
 
 				byte[] readBytes = new byte[numBytes];
-				if (el.getBytes(numBytes, readBytes) <= 0)
+				if (el.getBytes(numBytes, readBytes) <= 0) {
 					continue;
+				}
 
 				String readString = new String(readBytes);
 				if (readString.indexOf("ignore") > -1) {
@@ -108,26 +110,29 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 				postData.getElements(elements);
 				for (CefPostDataElement el : elements) {
 					int numBytes = el.getBytesCount();
-					if (numBytes <= 0)
+					if (numBytes <= 0) {
 						continue;
+					}
 
 					byte[] readBytes = new byte[numBytes];
-					if (el.getBytes(numBytes, readBytes) <= 0)
+					if (el.getBytes(numBytes, readBytes) <= 0) {
 						continue;
+					}
 
 					String readString = new String(readBytes).trim();
 					String[] stringPairs = readString.split("&");
 					for (String s : stringPairs) {
 						int startPos = s.indexOf('=');
-						if (s.startsWith("searchFor"))
+						if (s.startsWith("searchFor")) {
 							forwardTo += s.substring(startPos + 1);
-						else if (s.startsWith("sendAsGet")) {
+						} else if (s.startsWith("sendAsGet")) {
 							sendAsGet = true;
 						}
 					}
 				}
-				if (sendAsGet)
+				if (sendAsGet) {
 					postData.removeElements();
+				}
 			}
 			if (sendAsGet) {
 				request.setFlags(0);

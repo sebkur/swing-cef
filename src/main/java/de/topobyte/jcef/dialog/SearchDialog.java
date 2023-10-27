@@ -53,8 +53,9 @@ public class SearchDialog extends JDialog
 			public void actionPerformed(ActionEvent e)
 			{
 				if (searchField_.getText() == null
-						|| searchField_.getText().isEmpty())
+						|| searchField_.getText().isEmpty()) {
 					return;
+				}
 
 				setTitle("Find \"" + searchField_.getText() + "\"");
 				boolean matchCase = caseCheckBox_.isSelected();

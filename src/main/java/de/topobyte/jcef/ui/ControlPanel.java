@@ -172,13 +172,16 @@ public class ControlPanel extends JPanel
 		try {
 			address = address.replaceAll(" ", "%20");
 			URI test = new URI(address);
-			if (test.getScheme() != null)
+			if (test.getScheme() != null) {
 				return address;
-			if (test.getHost() != null && test.getPath() != null)
+			}
+			if (test.getHost() != null && test.getPath() != null) {
 				return address;
+			}
 			String specific = test.getSchemeSpecificPart();
-			if (specific.indexOf('.') == -1)
+			if (specific.indexOf('.') == -1) {
 				throw new URISyntaxException(specific, "No dot inside domain");
+			}
 		} catch (URISyntaxException e1) {
 			address = "search://" + address;
 		}
@@ -187,8 +190,9 @@ public class ControlPanel extends JPanel
 
 	public void setAddress(CefBrowser browser, String address)
 	{
-		if (browser == browser_)
+		if (browser == browser_) {
 			address_field_.setText(address);
+		}
 	}
 
 	public JTextField getAddressField()

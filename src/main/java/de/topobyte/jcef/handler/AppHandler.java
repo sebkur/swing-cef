@@ -73,10 +73,11 @@ public class AppHandler extends CefAppHandlerAdapter
 		public CefResourceHandler create(CefBrowser browser, CefFrame frame,
 				String schemeName, CefRequest request)
 		{
-			if (schemeName.equals(SearchSchemeHandler.scheme))
+			if (schemeName.equals(SearchSchemeHandler.scheme)) {
 				return new SearchSchemeHandler(browser);
-			else if (schemeName.equals(ClientSchemeHandler.scheme))
+			} else if (schemeName.equals(ClientSchemeHandler.scheme)) {
 				return new ClientSchemeHandler();
+			}
 			return null;
 		}
 	}
@@ -85,7 +86,8 @@ public class AppHandler extends CefAppHandlerAdapter
 	public void stateHasChanged(CefAppState state)
 	{
 		System.out.println("AppHandler.stateHasChanged: " + state);
-		if (state == CefAppState.TERMINATED)
+		if (state == CefAppState.TERMINATED) {
 			System.exit(0);
+		}
 	}
 }

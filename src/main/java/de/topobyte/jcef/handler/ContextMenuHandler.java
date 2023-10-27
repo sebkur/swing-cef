@@ -44,8 +44,9 @@ public class ContextMenuHandler implements CefContextMenuHandler
 
 		model.addSeparator();
 		model.addItem(MenuId.MENU_ID_FIND, "Find...");
-		if (params.hasImageContents() && params.getSourceUrl() != null)
+		if (params.hasImageContents() && params.getSourceUrl() != null) {
 			model.addItem(MenuId.MENU_ID_USER_FIRST, "Download Image...");
+		}
 		model.addItem(MenuId.MENU_ID_VIEW_SOURCE, "View Source...");
 
 		Vector<String> suggestions = new Vector<>();
@@ -64,8 +65,9 @@ public class ContextMenuHandler implements CefContextMenuHandler
 		for (String suggestedWord : suggestions) {
 			model.addItem(id, suggestedWord);
 			suggestions_.put(id, suggestedWord);
-			if (++id > MenuId.MENU_ID_SPELLCHECK_SUGGESTION_LAST)
+			if (++id > MenuId.MENU_ID_SPELLCHECK_SUGGESTION_LAST) {
 				break;
+			}
 		}
 	}
 

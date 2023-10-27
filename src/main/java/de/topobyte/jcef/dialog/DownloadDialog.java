@@ -115,8 +115,9 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler
 		String humanReadableByteCount(long bytes)
 		{
 			int unit = 1024;
-			if (bytes < unit)
+			if (bytes < unit) {
 				return bytes + " B";
+			}
 
 			int exp = (int) (Math.log(bytes) / Math.log(unit));
 			String pre = "" + ("kMGTPE").charAt(exp - 1);
@@ -174,8 +175,9 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler
 			CefDownloadItem downloadItem, CefDownloadItemCallback callback)
 	{
 		DownloadObject dlObject = downloadObjects_.get(downloadItem.getId());
-		if (dlObject == null)
+		if (dlObject == null) {
 			return;
+		}
 		dlObject.update(downloadItem, callback);
 	}
 }

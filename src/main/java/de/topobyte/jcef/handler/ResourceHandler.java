@@ -46,8 +46,9 @@ public class ResourceHandler extends CefResourceHandlerAdapter
 			IntRef bytes_read, CefCallback callback)
 	{
 		int length = html.length();
-		if (startPos >= length)
+		if (startPos >= length) {
 			return false;
+		}
 
 		// Extract up to bytes_to_read bytes from the html data
 		int endPos = startPos + bytes_to_read;

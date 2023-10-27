@@ -64,13 +64,15 @@ public class UrlRequestDialog extends JDialog
 		}
 
 		CefRequest request = CefRequest.create();
-		if (request == null)
+		if (request == null) {
 			return null;
+		}
 
 		String firstPartyForCookie = cookieUrl.getText();
 		if (firstPartyForCookie.isEmpty()
-				|| firstPartyForCookie.trim().equalsIgnoreCase("http://"))
+				|| firstPartyForCookie.trim().equalsIgnoreCase("http://")) {
 			firstPartyForCookie = url;
+		}
 
 		String method = "GET";
 		for (int i = 0; i < requestMethods.size(); i++) {
@@ -101,8 +103,9 @@ public class UrlRequestDialog extends JDialog
 		if (postData != null) {
 			for (int i = 0; i < postDataRows; i++) {
 				String value = (String) postDataModel.getValueAt(i, 0);
-				if (value.trim().isEmpty())
+				if (value.trim().isEmpty()) {
 					continue;
+				}
 
 				CefPostDataElement elem = CefPostDataElement.create();
 				if (elem != null) {
@@ -125,8 +128,9 @@ public class UrlRequestDialog extends JDialog
 			for (int i = 0; i < headerRows; i++) {
 				String key = (String) headerTblModel.getValueAt(i, 0);
 				String value = (String) headerTblModel.getValueAt(i, 1);
-				if (key.trim().isEmpty())
+				if (key.trim().isEmpty()) {
 					continue;
+				}
 
 				headerMap.put(key, value);
 			}
@@ -248,8 +252,9 @@ public class UrlRequestDialog extends JDialog
 			public void actionPerformed(ActionEvent e)
 			{
 				CefRequest request = createRequest();
-				if (request == null)
+				if (request == null) {
 					return;
+				}
 
 				UrlRequestDialogReply handleRequest = new UrlRequestDialogReply(
 						owner_, getTitle() + " - Result");
@@ -412,8 +417,9 @@ public class UrlRequestDialog extends JDialog
 		@Override
 		public Class<?> getColumnClass(int columnIndex)
 		{
-			if (rowData.size() > 0)
+			if (rowData.size() > 0) {
 				return rowData.get(0)[columnIndex].getClass();
+			}
 			return Object.class;
 		}
 

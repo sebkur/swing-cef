@@ -131,8 +131,9 @@ public class ClientSchemeHandler extends CefResourceHandlerAdapter
 			try {
 				ByteArrayOutputStream outFile = new ByteArrayOutputStream();
 				int readByte = -1;
-				while ((readByte = inStream.read()) >= 0)
+				while ((readByte = inStream.read()) >= 0) {
 					outFile.write(readByte);
+				}
 				data_ = outFile.toByteArray();
 				return true;
 			} catch (IOException e) {

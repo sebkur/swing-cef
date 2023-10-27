@@ -29,10 +29,11 @@ public class MessageRouterHandlerEx extends CefMessageRouterHandlerAdapter
 			String request, boolean persistent, CefQueryCallback callback)
 	{
 		if (request.startsWith("hasExtension")) {
-			if (router_ != null)
+			if (router_ != null) {
 				callback.success("");
-			else
+			} else {
 				callback.failure(0, "");
+			}
 		} else if (request.startsWith("enableExt")) {
 			if (router_ != null) {
 				callback.failure(-1, "Already enabled");

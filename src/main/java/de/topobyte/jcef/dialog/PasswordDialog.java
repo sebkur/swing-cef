@@ -52,8 +52,9 @@ public class PasswordDialog extends JDialog implements Runnable
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (username_.getText().isEmpty())
+				if (username_.getText().isEmpty()) {
 					return;
+				}
 				String password = new String(password_.getPassword());
 				callback_.Continue(username_.getText(), password);
 				setVisible(false);
