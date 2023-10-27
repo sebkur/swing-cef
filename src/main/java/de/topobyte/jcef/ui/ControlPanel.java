@@ -130,7 +130,7 @@ public class ControlPanel extends JPanel
 			public void actionPerformed(ActionEvent e)
 			{
 				browser_.setZoomLevel(--zoomLevel_);
-				zoom_label_.setText(new Double(zoomLevel_).toString());
+				zoom_label_.setText(Double.valueOf(zoomLevel_).toString());
 			}
 		});
 		add(minusButton);
@@ -146,7 +146,7 @@ public class ControlPanel extends JPanel
 			public void actionPerformed(ActionEvent e)
 			{
 				browser_.setZoomLevel(++zoomLevel_);
-				zoom_label_.setText(new Double(zoomLevel_).toString());
+				zoom_label_.setText(Double.valueOf(zoomLevel_).toString());
 			}
 		});
 		add(plusButton);

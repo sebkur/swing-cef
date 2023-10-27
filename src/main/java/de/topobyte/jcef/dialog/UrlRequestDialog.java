@@ -346,20 +346,21 @@ public class UrlRequestDialog extends JDialog
 		{
 			super();
 			hasKeyColumn_ = hasKeyColumn;
-			if (hasKeyColumn)
+			if (hasKeyColumn) {
 				columnNames = new String[] { "Key", "Value", "" };
-			else
+			} else {
 				columnNames = new String[] { "Value", "" };
+			}
 		}
 
 		public void newDefaultEntry()
 		{
 			int row = rowData.size();
 			if (hasKeyColumn_) {
-				Object[] rowEntry = { "key", "value", new Boolean(false) };
+				Object[] rowEntry = { "key", "value", Boolean.valueOf(false) };
 				rowData.addElement(rowEntry);
 			} else {
-				Object[] rowEntry = { "value", new Boolean(false) };
+				Object[] rowEntry = { "value", Boolean.valueOf(false) };
 				rowData.addElement(rowEntry);
 			}
 			fireTableRowsInserted(row, row);
@@ -381,10 +382,10 @@ public class UrlRequestDialog extends JDialog
 		{
 			int row = rowData.size();
 			if (hasKeyColumn_) {
-				Object[] rowEntry = { key, value, new Boolean(false) };
+				Object[] rowEntry = { key, value, Boolean.valueOf(false) };
 				rowData.addElement(rowEntry);
 			} else {
-				Object[] rowEntry = { value, new Boolean(false) };
+				Object[] rowEntry = { value, Boolean.valueOf(false) };
 				rowData.addElement(rowEntry);
 			}
 			fireTableRowsInserted(row, row);

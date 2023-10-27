@@ -111,8 +111,8 @@ public class CookieManagerDialog extends JDialog
 				BoolRef delete)
 		{
 			Object[] entry = { cookie.name, cookie.value, cookie.domain,
-					cookie.path, new Boolean(cookie.secure),
-					new Boolean(cookie.httponly), cookie.creation,
+					cookie.path, Boolean.valueOf(cookie.secure),
+					Boolean.valueOf(cookie.httponly), cookie.creation,
 					cookie.lastAccess, cookie.expires };
 			int row = rowData.size();
 			rowData.addElement(entry);
