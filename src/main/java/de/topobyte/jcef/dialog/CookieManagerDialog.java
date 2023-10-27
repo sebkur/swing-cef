@@ -85,8 +85,9 @@ public class CookieManagerDialog extends JDialog
 		add(new JScrollPane(cookieTable));
 		add(controlPanel, BorderLayout.SOUTH);
 
-		if (manager == null)
+		if (manager == null) {
 			throw new NullPointerException("Cookie manager is null");
+		}
 		manager.visitAllCookies(tblModel);
 	}
 

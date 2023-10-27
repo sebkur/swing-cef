@@ -16,6 +16,8 @@ import org.cef.handler.CefLifeSpanHandlerAdapter;
 
 public class BrowserFrame extends JFrame
 {
+	private static final long serialVersionUID = 1L;
+
 	private volatile boolean isClosed_ = false;
 	private CefBrowser browser_ = null;
 	private static int browserCount_ = 0;
@@ -101,8 +103,9 @@ public class BrowserFrame extends JFrame
 
 	public void setBrowser(CefBrowser browser)
 	{
-		if (browser_ == null)
+		if (browser_ == null) {
 			browser_ = browser;
+		}
 
 		browser_.getClient().removeLifeSpanHandler();
 		browser_.getClient()
