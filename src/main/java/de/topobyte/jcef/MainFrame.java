@@ -60,12 +60,28 @@ public class MainFrame extends BrowserFrame
 			factor = SharedPreferences.getUIScale();
 		}
 
+		// OSR mode is enabled by default on Linux.
+		// and disabled by default on Windows and Mac OS X.
+		boolean osrEnabledArg = false;
+		boolean transparentPaintingEnabledArg = false;
+		boolean createImmediately = false;
+		for (String arg : args) {
+			arg = arg.toLowerCase();
+			if (arg.equals("--off-screen-rendering-enabled")) {
+				osrEnabledArg = true;
+			} else if (arg.equals("--transparent-painting-enabled")) {
+				transparentPaintingEnabledArg = true;
+			} else if (arg.equals("--create-immediately")) {
+				createImmediately = true;
+			}
+		}
+
 		CefAppBuilder builder = new CefAppBuilder();
 
 		// Configure the builder instance
 		builder.setInstallDir(new File("jcef-bundle")); // Default
 		builder.setProgressHandler(new ConsoleProgressHandler()); // Default
-		builder.getCefSettings().windowless_rendering_enabled = false;
+		builder.getCefSettings().windowless_rendering_enabled = osrEnabledArg;
 		// Default - select OSR mode
 
 		// Set an app handler. Do not use CefApp.addAppHandler(...), it will
@@ -86,22 +102,6 @@ public class MainFrame extends BrowserFrame
 		});
 
 		cefApp = builder.build();
-
-		// OSR mode is enabled by default on Linux.
-		// and disabled by default on Windows and Mac OS X.
-		boolean osrEnabledArg = false;
-		boolean transparentPaintingEnabledArg = false;
-		boolean createImmediately = false;
-		for (String arg : args) {
-			arg = arg.toLowerCase();
-			if (arg.equals("--off-screen-rendering-enabled")) {
-				osrEnabledArg = true;
-			} else if (arg.equals("--transparent-painting-enabled")) {
-				transparentPaintingEnabledArg = true;
-			} else if (arg.equals("--create-immediately")) {
-				createImmediately = true;
-			}
-		}
 
 		System.out.println("Offscreen rendering "
 				+ (osrEnabledArg ? "enabled" : "disabled"));
