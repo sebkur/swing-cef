@@ -24,6 +24,8 @@ import org.cef.handler.CefFocusHandlerAdapter;
 import org.cef.handler.CefLoadHandlerAdapter;
 import org.cef.network.CefCookieManager;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 import de.topobyte.jcef.dialog.DownloadDialog;
 import de.topobyte.jcef.handler.ContextMenuHandler;
 import de.topobyte.jcef.handler.DragHandler;
@@ -59,6 +61,8 @@ public class MainFrame extends BrowserFrame
 			SwingUtils.setUiScale(SharedPreferences.getUIScale());
 			factor = SharedPreferences.getUIScale();
 		}
+
+		FlatLightLaf.setup();
 
 		// OSR mode is enabled by default on Linux.
 		// and disabled by default on Windows and Mac OS X.

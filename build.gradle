@@ -35,6 +35,7 @@ dependencies {
     //implementation 'me.friwi:jcef-natives-linux-amd64:jcef-37f25dc+cef-116.0.19+gc6a20bc+chromium-116.0.5845.141'
     implementation 'de.topobyte:shared-preferences:0.1.0'
     implementation 'de.topobyte:swing-utils:0.0.13'
+    implementation 'com.formdev:flatlaf:3.2.5'
 }
 
 task copyJars(type: Copy) {
