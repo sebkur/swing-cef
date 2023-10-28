@@ -36,6 +36,7 @@ dependencies {
     implementation 'de.topobyte:shared-preferences:0.1.0'
     implementation 'de.topobyte:swing-utils:0.0.13'
     implementation 'com.formdev:flatlaf:3.2.5'
+    implementation 'com.formdev:flatlaf-extras:3.2.5'
 }
 
 task copyJars(type: Copy) {

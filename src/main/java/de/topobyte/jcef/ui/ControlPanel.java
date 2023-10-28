@@ -19,6 +19,8 @@ import javax.swing.JTextField;
 import org.cef.OS;
 import org.cef.browser.CefBrowser;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+
 @SuppressWarnings("serial")
 public class ControlPanel extends JPanel
 {
@@ -40,7 +42,9 @@ public class ControlPanel extends JPanel
 		add(Box.createHorizontalStrut(5));
 		add(Box.createHorizontalStrut(5));
 
-		backButton_ = new JButton("Back");
+		backButton_ = new JButton();
+		backButton_.setToolTipText("Back");
+		backButton_.setIcon(new FlatSVGIcon("icons/back.svg"));
 		backButton_.setFocusable(false);
 		backButton_.setAlignmentX(LEFT_ALIGNMENT);
 		backButton_.addActionListener(new ActionListener() {
@@ -53,7 +57,9 @@ public class ControlPanel extends JPanel
 		add(backButton_);
 		add(Box.createHorizontalStrut(5));
 
-		forwardButton_ = new JButton("Forward");
+		forwardButton_ = new JButton();
+		forwardButton_.setToolTipText("Forward");
+		forwardButton_.setIcon(new FlatSVGIcon("icons/forward.svg"));
 		forwardButton_.setFocusable(false);
 		forwardButton_.setAlignmentX(LEFT_ALIGNMENT);
 		forwardButton_.addActionListener(new ActionListener() {
@@ -66,7 +72,9 @@ public class ControlPanel extends JPanel
 		add(forwardButton_);
 		add(Box.createHorizontalStrut(5));
 
-		reloadButton_ = new JButton("Reload");
+		reloadButton_ = new JButton();
+		reloadButton_.setToolTipText("Reload");
+		reloadButton_.setIcon(new FlatSVGIcon("icons/refresh.svg"));
 		reloadButton_.setFocusable(false);
 		reloadButton_.setAlignmentX(LEFT_ALIGNMENT);
 		reloadButton_.addActionListener(new ActionListener() {
@@ -122,7 +130,9 @@ public class ControlPanel extends JPanel
 		add(goButton);
 		add(Box.createHorizontalStrut(5));
 
-		JButton minusButton = new JButton("-");
+		JButton minusButton = new JButton();
+		minusButton.setToolTipText("Decrease zoom");
+		minusButton.setIcon(new FlatSVGIcon("icons/zoomOut.svg"));
 		minusButton.setFocusable(false);
 		minusButton.setAlignmentX(CENTER_ALIGNMENT);
 		minusButton.addActionListener(new ActionListener() {
@@ -138,7 +148,9 @@ public class ControlPanel extends JPanel
 		zoom_label_ = new JLabel("0.0");
 		add(zoom_label_);
 
-		JButton plusButton = new JButton("+");
+		JButton plusButton = new JButton("");
+		plusButton.setToolTipText("Increase zoom");
+		plusButton.setIcon(new FlatSVGIcon("icons/zoomIn.svg"));
 		plusButton.setFocusable(false);
 		plusButton.setAlignmentX(CENTER_ALIGNMENT);
 		plusButton.addActionListener(new ActionListener() {
@@ -158,7 +170,13 @@ public class ControlPanel extends JPanel
 		if (browser == browser_) {
 			backButton_.setEnabled(canGoBack);
 			forwardButton_.setEnabled(canGoForward);
-			reloadButton_.setText(isLoading ? "Abort" : "Reload");
+			if (isLoading) {
+				reloadButton_.setToolTipText("Abort");
+				reloadButton_.setIcon(new FlatSVGIcon("icons/cancel.svg"));
+			} else {
+				reloadButton_.setToolTipText("Reload");
+				reloadButton_.setIcon(new FlatSVGIcon("icons/refresh.svg"));
+			}
 		}
 	}
 
