@@ -32,6 +32,8 @@ public class ControlPanel extends JPanel
 	private double zoomLevel_ = 0;
 	private final CefBrowser browser_;
 
+	private static final int ICON_SIZE = 16;
+
 	public ControlPanel(CefBrowser browser)
 	{
 		assert browser != null;
@@ -44,7 +46,7 @@ public class ControlPanel extends JPanel
 
 		backButton_ = new JButton();
 		backButton_.setToolTipText("Back");
-		backButton_.setIcon(new FlatSVGIcon("icons/back.svg"));
+		backButton_.setIcon(icon("icons/back.svg"));
 		backButton_.setFocusable(false);
 		backButton_.setAlignmentX(LEFT_ALIGNMENT);
 		backButton_.addActionListener(new ActionListener() {
@@ -59,7 +61,7 @@ public class ControlPanel extends JPanel
 
 		forwardButton_ = new JButton();
 		forwardButton_.setToolTipText("Forward");
-		forwardButton_.setIcon(new FlatSVGIcon("icons/forward.svg"));
+		forwardButton_.setIcon(icon("icons/forward.svg"));
 		forwardButton_.setFocusable(false);
 		forwardButton_.setAlignmentX(LEFT_ALIGNMENT);
 		forwardButton_.addActionListener(new ActionListener() {
@@ -74,7 +76,7 @@ public class ControlPanel extends JPanel
 
 		reloadButton_ = new JButton();
 		reloadButton_.setToolTipText("Reload");
-		reloadButton_.setIcon(new FlatSVGIcon("icons/refresh.svg"));
+		reloadButton_.setIcon(icon("icons/refresh.svg"));
 		reloadButton_.setFocusable(false);
 		reloadButton_.setAlignmentX(LEFT_ALIGNMENT);
 		reloadButton_.addActionListener(new ActionListener() {
@@ -117,7 +119,9 @@ public class ControlPanel extends JPanel
 		add(address_field_);
 		add(Box.createHorizontalStrut(5));
 
-		JButton goButton = new JButton("Go");
+		JButton goButton = new JButton();
+		goButton.setToolTipText("Go");
+		goButton.setIcon(icon("icons/return.svg"));
 		goButton.setFocusable(false);
 		goButton.setAlignmentX(LEFT_ALIGNMENT);
 		goButton.addActionListener(new ActionListener() {
@@ -132,7 +136,7 @@ public class ControlPanel extends JPanel
 
 		JButton minusButton = new JButton();
 		minusButton.setToolTipText("Decrease zoom");
-		minusButton.setIcon(new FlatSVGIcon("icons/zoomOut.svg"));
+		minusButton.setIcon(icon("icons/zoomOut.svg"));
 		minusButton.setFocusable(false);
 		minusButton.setAlignmentX(CENTER_ALIGNMENT);
 		minusButton.addActionListener(new ActionListener() {
@@ -150,7 +154,7 @@ public class ControlPanel extends JPanel
 
 		JButton plusButton = new JButton("");
 		plusButton.setToolTipText("Increase zoom");
-		plusButton.setIcon(new FlatSVGIcon("icons/zoomIn.svg"));
+		plusButton.setIcon(icon("icons/zoomIn.svg"));
 		plusButton.setFocusable(false);
 		plusButton.setAlignmentX(CENTER_ALIGNMENT);
 		plusButton.addActionListener(new ActionListener() {
@@ -164,6 +168,11 @@ public class ControlPanel extends JPanel
 		add(plusButton);
 	}
 
+	private FlatSVGIcon icon(String string)
+	{
+		return new FlatSVGIcon(string, ICON_SIZE, ICON_SIZE);
+	}
+
 	public void update(CefBrowser browser, boolean isLoading, boolean canGoBack,
 			boolean canGoForward)
 	{
@@ -172,10 +181,10 @@ public class ControlPanel extends JPanel
 			forwardButton_.setEnabled(canGoForward);
 			if (isLoading) {
 				reloadButton_.setToolTipText("Abort");
-				reloadButton_.setIcon(new FlatSVGIcon("icons/cancel.svg"));
+				reloadButton_.setIcon(icon("icons/cancel.svg"));
 			} else {
 				reloadButton_.setToolTipText("Reload");
-				reloadButton_.setIcon(new FlatSVGIcon("icons/refresh.svg"));
+				reloadButton_.setIcon(icon("icons/refresh.svg"));
 			}
 		}
 	}
