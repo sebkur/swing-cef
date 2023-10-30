@@ -102,7 +102,7 @@ public class ControlPanel extends JPanel
 		add(reloadButton_);
 		add(Box.createHorizontalStrut(5));
 
-		address_field_ = new JTextField(100);
+		address_field_ = new HintTextField(100, "Type an address here");
 		address_field_.setAlignmentX(LEFT_ALIGNMENT);
 		address_field_.addActionListener(new ActionListener() {
 			@Override
