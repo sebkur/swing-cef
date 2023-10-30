@@ -102,11 +102,6 @@ public class ControlPanel extends JPanel
 		add(reloadButton_);
 		add(Box.createHorizontalStrut(5));
 
-		JLabel addressLabel = new JLabel("Address:");
-		addressLabel.setAlignmentX(LEFT_ALIGNMENT);
-		add(addressLabel);
-		add(Box.createHorizontalStrut(5));
-
 		address_field_ = new JTextField(100);
 		address_field_.setAlignmentX(LEFT_ALIGNMENT);
 		address_field_.addActionListener(new ActionListener() {
