@@ -21,7 +21,7 @@ import org.cef.callback.CefStringVisitor;
 @SuppressWarnings("serial")
 public class ShowTextDialog extends JDialog implements CefStringVisitor
 {
-	private final JTextArea textArea_ = new JTextArea();
+	private final JTextArea textArea = new JTextArea();
 
 	public ShowTextDialog(Frame owner, String title)
 	{
@@ -42,7 +42,7 @@ public class ShowTextDialog extends JDialog implements CefStringVisitor
 		});
 		controlPanel.add(doneButton);
 
-		add(new JScrollPane(textArea_));
+		add(new JScrollPane(textArea));
 		add(controlPanel, BorderLayout.SOUTH);
 	}
 
@@ -52,6 +52,6 @@ public class ShowTextDialog extends JDialog implements CefStringVisitor
 		if (!isVisible()) {
 			setVisible(true);
 		}
-		textArea_.append(string);
+		textArea.append(string);
 	}
 }

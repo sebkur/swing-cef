@@ -18,10 +18,10 @@ public class BrowserFrame extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 
-	private volatile boolean isClosed_ = false;
-	private CefBrowser browser_ = null;
-	private static int browserCount_ = 0;
-	private Runnable afterParentChangedAction_ = null;
+	private volatile boolean isClosed = false;
+	private CefBrowser browser = null;
+	private static int browserCount = 0;
+	private Runnable afterParentChangedAction = null;
 
 	public BrowserFrame()
 	{
@@ -65,31 +65,31 @@ public class BrowserFrame extends JFrame
 			@Override
 			public void windowClosing(WindowEvent e)
 			{
-				if (browser_ == null) {
+				if (browser == null) {
 					// If there's no browser we can dispose immediately.
-					isClosed_ = true;
+					isClosed = true;
 					System.out.println(
 							"BrowserFrame.windowClosing Frame.dispose");
 					dispose();
 					return;
 				}
 
-				boolean isClosed = isClosed_;
+				boolean isClosed = BrowserFrame.this.isClosed;
 
 				if (isClosed) {
 					// Cause browser.doClose() to return false so that OSR
 					// browsers
 					// can close.
-					browser_.setCloseAllowed();
+					browser.setCloseAllowed();
 				}
 
 				// Results in another call to this method.
 				System.out
 						.println("BrowserFrame.windowClosing CefBrowser.close("
 								+ isClosed + ")");
-				browser_.close(isClosed);
-				if (!isClosed_) {
-					isClosed_ = true;
+				browser.close(isClosed);
+				if (!isClosed) {
+					BrowserFrame.this.isClosed = true;
 				}
 				if (isClosed) {
 					// Dispose after the 2nd call to this method.
@@ -103,72 +103,69 @@ public class BrowserFrame extends JFrame
 
 	public void setBrowser(CefBrowser browser)
 	{
-		if (browser_ == null) {
-			browser_ = browser;
+		if (this.browser == null) {
+			this.browser = browser;
 		}
 
-		browser_.getClient().removeLifeSpanHandler();
-		browser_.getClient()
-				.addLifeSpanHandler(new CefLifeSpanHandlerAdapter() {
-					@Override
-					public void onAfterCreated(CefBrowser browser)
-					{
-						System.out.println("BrowserFrame.onAfterCreated id="
-								+ browser.getIdentifier());
-						browserCount_++;
-					}
+		browser.getClient().removeLifeSpanHandler();
+		browser.getClient().addLifeSpanHandler(new CefLifeSpanHandlerAdapter() {
+			@Override
+			public void onAfterCreated(CefBrowser browser)
+			{
+				System.out.println("BrowserFrame.onAfterCreated id="
+						+ browser.getIdentifier());
+				browserCount++;
+			}
 
-					@Override
-					public void onAfterParentChanged(CefBrowser browser)
-					{
-						System.out
-								.println("BrowserFrame.onAfterParentChanged id="
-										+ browser.getIdentifier());
-						if (afterParentChangedAction_ != null) {
-							SwingUtilities
-									.invokeLater(afterParentChangedAction_);
-							afterParentChangedAction_ = null;
-						}
-					}
+			@Override
+			public void onAfterParentChanged(CefBrowser browser)
+			{
+				System.out.println("BrowserFrame.onAfterParentChanged id="
+						+ browser.getIdentifier());
+				if (afterParentChangedAction != null) {
+					SwingUtilities.invokeLater(afterParentChangedAction);
+					afterParentChangedAction = null;
+				}
+			}
 
-					@Override
-					public boolean doClose(CefBrowser browser)
-					{
-						boolean result = browser.doClose();
-						System.out.println("BrowserFrame.doClose id="
-								+ browser.getIdentifier()
+			@Override
+			public boolean doClose(CefBrowser browser)
+			{
+				boolean result = browser.doClose();
+				System.out.println(
+						"BrowserFrame.doClose id=" + browser.getIdentifier()
 								+ " CefBrowser.doClose=" + result);
-						return result;
-					}
+				return result;
+			}
 
-					@Override
-					public void onBeforeClose(CefBrowser browser)
-					{
-						System.out.println("BrowserFrame.onBeforeClose id="
-								+ browser.getIdentifier());
-						if (--browserCount_ == 0) {
-							System.out.println(
-									"BrowserFrame.onBeforeClose CefApp.dispose");
-							CefApp.getInstance().dispose();
-						}
-					}
-				});
+			@Override
+			public void onBeforeClose(CefBrowser browser)
+			{
+				System.out.println("BrowserFrame.onBeforeClose id="
+						+ browser.getIdentifier());
+				if (--browserCount == 0) {
+					System.out.println(
+							"BrowserFrame.onBeforeClose CefApp.dispose");
+					CefApp.getInstance().dispose();
+				}
+			}
+		});
 	}
 
 	public void removeBrowser(Runnable r)
 	{
 		System.out.println("BrowserFrame.removeBrowser");
-		afterParentChangedAction_ = r;
-		remove(browser_.getUIComponent());
+		afterParentChangedAction = r;
+		remove(browser.getUIComponent());
 		// The removeNotify() notification should be sent as a result of calling
 		// remove().
 		// However, it isn't in all cases so we do it manually here.
-		browser_.getUIComponent().removeNotify();
-		browser_ = null;
+		browser.getUIComponent().removeNotify();
+		browser = null;
 	}
 
 	public CefBrowser getBrowser()
 	{
-		return browser_;
+		return browser;
 	}
 }

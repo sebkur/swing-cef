@@ -24,94 +24,94 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 @SuppressWarnings("serial")
 public class ControlPanel extends JPanel
 {
-	private final JButton backButton_;
-	private final JButton forwardButton_;
-	private final JButton reloadButton_;
-	private final JTextField address_field_;
-	private final JLabel zoom_label_;
-	private double zoomLevel_ = 0;
-	private final CefBrowser browser_;
+	private final JButton backButton;
+	private final JButton forwardButton;
+	private final JButton reloadButton;
+	private final JTextField addressField;
+	private final JLabel zoomLabel;
+	private double zoomLevel = 0;
+	private final CefBrowser browser;
 
 	private static final int ICON_SIZE = 16;
 
 	public ControlPanel(CefBrowser browser)
 	{
 		assert browser != null;
-		browser_ = browser;
+		this.browser = browser;
 
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
 		add(Box.createHorizontalStrut(5));
 		add(Box.createHorizontalStrut(5));
 
-		backButton_ = new JButton();
-		backButton_.setToolTipText("Back");
-		backButton_.setIcon(icon("icons/back.svg"));
-		backButton_.setFocusable(false);
-		backButton_.setAlignmentX(LEFT_ALIGNMENT);
-		backButton_.addActionListener(new ActionListener() {
+		backButton = new JButton();
+		backButton.setToolTipText("Back");
+		backButton.setIcon(icon("icons/back.svg"));
+		backButton.setFocusable(false);
+		backButton.setAlignmentX(LEFT_ALIGNMENT);
+		backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.goBack();
+				browser.goBack();
 			}
 		});
-		add(backButton_);
+		add(backButton);
 		add(Box.createHorizontalStrut(5));
 
-		forwardButton_ = new JButton();
-		forwardButton_.setToolTipText("Forward");
-		forwardButton_.setIcon(icon("icons/forward.svg"));
-		forwardButton_.setFocusable(false);
-		forwardButton_.setAlignmentX(LEFT_ALIGNMENT);
-		forwardButton_.addActionListener(new ActionListener() {
+		forwardButton = new JButton();
+		forwardButton.setToolTipText("Forward");
+		forwardButton.setIcon(icon("icons/forward.svg"));
+		forwardButton.setFocusable(false);
+		forwardButton.setAlignmentX(LEFT_ALIGNMENT);
+		forwardButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.goForward();
+				browser.goForward();
 			}
 		});
-		add(forwardButton_);
+		add(forwardButton);
 		add(Box.createHorizontalStrut(5));
 
-		reloadButton_ = new JButton();
-		reloadButton_.setToolTipText("Reload");
-		reloadButton_.setIcon(icon("icons/refresh.svg"));
-		reloadButton_.setFocusable(false);
-		reloadButton_.setAlignmentX(LEFT_ALIGNMENT);
-		reloadButton_.addActionListener(new ActionListener() {
+		reloadButton = new JButton();
+		reloadButton.setToolTipText("Reload");
+		reloadButton.setIcon(icon("icons/refresh.svg"));
+		reloadButton.setFocusable(false);
+		reloadButton.setAlignmentX(LEFT_ALIGNMENT);
+		reloadButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (reloadButton_.getText().equalsIgnoreCase("reload")) {
+				if (reloadButton.getText().equalsIgnoreCase("reload")) {
 					int mask = OS.isMacintosh() ? ActionEvent.META_MASK
 							: ActionEvent.CTRL_MASK;
 					if ((e.getModifiers() & mask) != 0) {
 						System.out
 								.println("Reloading - ignoring cached values");
-						browser_.reloadIgnoreCache();
+						browser.reloadIgnoreCache();
 					} else {
 						System.out.println("Reloading - using cached values");
-						browser_.reload();
+						browser.reload();
 					}
 				} else {
-					browser_.stopLoad();
+					browser.stopLoad();
 				}
 			}
 		});
-		add(reloadButton_);
+		add(reloadButton);
 		add(Box.createHorizontalStrut(5));
 
-		address_field_ = new HintTextField(100, "Type an address here");
-		address_field_.setAlignmentX(LEFT_ALIGNMENT);
-		address_field_.addActionListener(new ActionListener() {
+		addressField = new HintTextField(100, "Type an address here");
+		addressField.setAlignmentX(LEFT_ALIGNMENT);
+		addressField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.loadURL(getAddress());
+				browser.loadURL(getAddress());
 			}
 		});
-		add(address_field_);
+		add(addressField);
 		add(Box.createHorizontalStrut(5));
 
 		JButton goButton = new JButton();
@@ -123,7 +123,7 @@ public class ControlPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.loadURL(getAddress());
+				browser.loadURL(getAddress());
 			}
 		});
 		add(goButton);
@@ -138,14 +138,14 @@ public class ControlPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.setZoomLevel(--zoomLevel_);
-				zoom_label_.setText(Double.valueOf(zoomLevel_).toString());
+				browser.setZoomLevel(--zoomLevel);
+				zoomLabel.setText(Double.valueOf(zoomLevel).toString());
 			}
 		});
 		add(minusButton);
 
-		zoom_label_ = new JLabel("0.0");
-		add(zoom_label_);
+		zoomLabel = new JLabel("0.0");
+		add(zoomLabel);
 
 		JButton plusButton = new JButton("");
 		plusButton.setToolTipText("Increase zoom");
@@ -156,8 +156,8 @@ public class ControlPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.setZoomLevel(++zoomLevel_);
-				zoom_label_.setText(Double.valueOf(zoomLevel_).toString());
+				browser.setZoomLevel(++zoomLevel);
+				zoomLabel.setText(Double.valueOf(zoomLevel).toString());
 			}
 		});
 		add(plusButton);
@@ -171,22 +171,22 @@ public class ControlPanel extends JPanel
 	public void update(CefBrowser browser, boolean isLoading, boolean canGoBack,
 			boolean canGoForward)
 	{
-		if (browser == browser_) {
-			backButton_.setEnabled(canGoBack);
-			forwardButton_.setEnabled(canGoForward);
+		if (this.browser == browser) {
+			backButton.setEnabled(canGoBack);
+			forwardButton.setEnabled(canGoForward);
 			if (isLoading) {
-				reloadButton_.setToolTipText("Abort");
-				reloadButton_.setIcon(icon("icons/cancel.svg"));
+				reloadButton.setToolTipText("Abort");
+				reloadButton.setIcon(icon("icons/cancel.svg"));
 			} else {
-				reloadButton_.setToolTipText("Reload");
-				reloadButton_.setIcon(icon("icons/refresh.svg"));
+				reloadButton.setToolTipText("Reload");
+				reloadButton.setIcon(icon("icons/refresh.svg"));
 			}
 		}
 	}
 
 	public String getAddress()
 	{
-		String address = address_field_.getText();
+		String address = addressField.getText();
 		// If the URI format is unknown "new URI" will throw an
 		// exception. In this case we interpret the value of the
 		// address field as search request. Therefore we simply add
@@ -212,13 +212,13 @@ public class ControlPanel extends JPanel
 
 	public void setAddress(CefBrowser browser, String address)
 	{
-		if (browser == browser_) {
-			address_field_.setText(address);
+		if (this.browser == browser) {
+			addressField.setText(address);
 		}
 	}
 
 	public JTextField getAddressField()
 	{
-		return address_field_;
+		return addressField;
 	}
 }

@@ -118,26 +118,26 @@ public class MainFrame extends BrowserFrame
 		frame.setVisible(true);
 	}
 
-	private final CefClient client_;
-	private String errorMsg_ = "";
-	private ControlPanel control_pane_;
-	private StatusPanel status_panel_;
-	private boolean browserFocus_ = true;
-	private boolean osr_enabled_;
-	private boolean transparent_painting_enabled_;
+	private final CefClient client;
+	private String errorMsg = "";
+	private ControlPanel controlPane;
+	private StatusPanel statusPanel;
+	private boolean browserFocus = true;
+	private boolean osrEnabled;
+	private boolean transparentPaintingEnabled;
 
 	public MainFrame(CefApp myApp, boolean osrEnabled,
 			boolean transparentPaintingEnabled, boolean createImmediately,
 			String[] args)
 	{
-		this.osr_enabled_ = osrEnabled;
-		this.transparent_painting_enabled_ = transparentPaintingEnabled;
+		this.osrEnabled = osrEnabled;
+		this.transparentPaintingEnabled = transparentPaintingEnabled;
 
 		// By calling the method createClient() the native part
 		// of JCEF/CEF will be initialized and an instance of
 		// CefClient will be created. You can create one to many
 		// instances of CefClient.
-		client_ = myApp.createClient();
+		client = myApp.createClient();
 
 		// 2) You have the ability to pass different handlers to your
 		// instance of CefClient. Each handler is responsible to
@@ -147,12 +147,12 @@ public class MainFrame extends BrowserFrame
 		// classes exists. So you don't need to override methods
 		// you're not interested in.
 		DownloadDialog downloadDialog = new DownloadDialog(this);
-		client_.addContextMenuHandler(new ContextMenuHandler(this));
-		client_.addDownloadHandler(downloadDialog);
-		client_.addDragHandler(new DragHandler());
-		client_.addJSDialogHandler(new JSDialogHandler());
-		client_.addKeyboardHandler(new KeyboardHandler());
-		client_.addRequestHandler(new RequestHandler(this));
+		client.addContextMenuHandler(new ContextMenuHandler(this));
+		client.addDownloadHandler(downloadDialog);
+		client.addDragHandler(new DragHandler());
+		client.addJSDialogHandler(new JSDialogHandler());
+		client.addKeyboardHandler(new KeyboardHandler());
+		client.addRequestHandler(new RequestHandler(this));
 
 		// Beside the normal handler instances, we're registering a
 		// MessageRouter
@@ -162,18 +162,18 @@ public class MainFrame extends BrowserFrame
 		// are used.
 		CefMessageRouter msgRouter = CefMessageRouter.create();
 		msgRouter.addHandler(new MessageRouterHandler(), true);
-		msgRouter.addHandler(new MessageRouterHandlerEx(client_), false);
-		client_.addMessageRouter(msgRouter);
+		msgRouter.addHandler(new MessageRouterHandlerEx(client), false);
+		client.addMessageRouter(msgRouter);
 
 		// 2.1) We're overriding CefDisplayHandler as nested anonymous class
 		// to update our address-field, the title of the panel as well
 		// as for updating the status-bar on the bottom of the browser
-		client_.addDisplayHandler(new CefDisplayHandlerAdapter() {
+		client.addDisplayHandler(new CefDisplayHandlerAdapter() {
 			@Override
 			public void onAddressChange(CefBrowser browser, CefFrame frame,
 					String url)
 			{
-				control_pane_.setAddress(browser, url);
+				controlPane.setAddress(browser, url);
 			}
 
 			@Override
@@ -185,7 +185,7 @@ public class MainFrame extends BrowserFrame
 			@Override
 			public void onStatusMessage(CefBrowser browser, String value)
 			{
-				status_panel_.setStatusText(value);
+				statusPanel.setStatusText(value);
 			}
 		});
 
@@ -196,18 +196,18 @@ public class MainFrame extends BrowserFrame
 		// load handler is responsible to deal with (load) errors as well.
 		// For example if you navigate to a URL which does not exist, the
 		// browser will show up an error message.
-		client_.addLoadHandler(new CefLoadHandlerAdapter() {
+		client.addLoadHandler(new CefLoadHandlerAdapter() {
 			@Override
 			public void onLoadingStateChange(CefBrowser browser,
 					boolean isLoading, boolean canGoBack, boolean canGoForward)
 			{
-				control_pane_.update(browser, isLoading, canGoBack,
+				controlPane.update(browser, isLoading, canGoBack,
 						canGoForward);
-				status_panel_.setIsInProgress(isLoading);
+				statusPanel.setIsInProgress(isLoading);
 
-				if (!isLoading && !errorMsg_.isEmpty()) {
-					browser.loadURL(DataUri.create("text/html", errorMsg_));
-					errorMsg_ = "";
+				if (!isLoading && !errorMsg.isEmpty()) {
+					browser.loadURL(DataUri.create("text/html", errorMsg));
+					errorMsg = "";
 				}
 			}
 
@@ -217,21 +217,21 @@ public class MainFrame extends BrowserFrame
 			{
 				if (errorCode != ErrorCode.ERR_NONE
 						&& errorCode != ErrorCode.ERR_ABORTED) {
-					errorMsg_ = "<html><head>";
-					errorMsg_ += "<title>Error while loading</title>";
-					errorMsg_ += "</head><body>";
-					errorMsg_ += "<h1>" + errorCode + "</h1>";
-					errorMsg_ += "<h3>Failed to load " + failedUrl + "</h3>";
-					errorMsg_ += "<p>" + (errorText == null ? "" : errorText)
+					errorMsg = "<html><head>";
+					errorMsg += "<title>Error while loading</title>";
+					errorMsg += "</head><body>";
+					errorMsg += "<h1>" + errorCode + "</h1>";
+					errorMsg += "<h3>Failed to load " + failedUrl + "</h3>";
+					errorMsg += "<p>" + (errorText == null ? "" : errorText)
 							+ "</p>";
-					errorMsg_ += "</body></html>";
+					errorMsg += "</body></html>";
 					browser.stopLoad();
 				}
 			}
 		});
 
 		// Create the browser.
-		CefBrowser browser = client_.createBrowser("http://www.google.com",
+		CefBrowser browser = client.createBrowser("http://www.google.com",
 				osrEnabled, transparentPaintingEnabled, null);
 		setBrowser(browser);
 
@@ -240,29 +240,29 @@ public class MainFrame extends BrowserFrame
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 
 		// Clear focus from the browser when the address field gains focus.
-		control_pane_.getAddressField().addFocusListener(new FocusAdapter() {
+		controlPane.getAddressField().addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e)
 			{
-				if (!browserFocus_) {
+				if (!browserFocus) {
 					return;
 				}
-				browserFocus_ = false;
+				browserFocus = false;
 				KeyboardFocusManager.getCurrentKeyboardFocusManager()
 						.clearGlobalFocusOwner();
-				control_pane_.getAddressField().requestFocus();
+				controlPane.getAddressField().requestFocus();
 			}
 		});
 
 		// Clear focus from the address field when the browser gains focus.
-		client_.addFocusHandler(new CefFocusHandlerAdapter() {
+		client.addFocusHandler(new CefFocusHandlerAdapter() {
 			@Override
 			public void onGotFocus(CefBrowser browser)
 			{
-				if (browserFocus_) {
+				if (browserFocus) {
 					return;
 				}
-				browserFocus_ = true;
+				browserFocus = true;
 				KeyboardFocusManager.getCurrentKeyboardFocusManager()
 						.clearGlobalFocusOwner();
 				browser.setFocus(true);
@@ -271,7 +271,7 @@ public class MainFrame extends BrowserFrame
 			@Override
 			public void onTakeFocus(CefBrowser browser, boolean next)
 			{
-				browserFocus_ = false;
+				browserFocus = false;
 			}
 		});
 
@@ -282,7 +282,7 @@ public class MainFrame extends BrowserFrame
 		// Add the browser to the UI.
 		contentPanel.add(getBrowser().getUIComponent(), BorderLayout.CENTER);
 
-		MenuBar menuBar = new MenuBar(this, browser, control_pane_,
+		MenuBar menuBar = new MenuBar(this, browser, controlPane,
 				downloadDialog, CefCookieManager.getGlobalManager());
 
 		menuBar.addBookmark("Binding Test", "client://tests/binding_test.html");
@@ -317,20 +317,20 @@ public class MainFrame extends BrowserFrame
 	private JPanel createContentPanel()
 	{
 		JPanel contentPanel = new JPanel(new BorderLayout());
-		control_pane_ = new ControlPanel(getBrowser());
-		status_panel_ = new StatusPanel();
-		contentPanel.add(control_pane_, BorderLayout.NORTH);
-		contentPanel.add(status_panel_, BorderLayout.SOUTH);
+		controlPane = new ControlPanel(getBrowser());
+		statusPanel = new StatusPanel();
+		contentPanel.add(controlPane, BorderLayout.NORTH);
+		contentPanel.add(statusPanel, BorderLayout.SOUTH);
 		return contentPanel;
 	}
 
 	public boolean isOsrEnabled()
 	{
-		return osr_enabled_;
+		return osrEnabled;
 	}
 
 	public boolean isTransparentPaintingEnabled()
 	{
-		return transparent_painting_enabled_;
+		return transparentPaintingEnabled;
 	}
 }

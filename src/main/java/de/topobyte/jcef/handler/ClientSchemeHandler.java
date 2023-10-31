@@ -25,9 +25,9 @@ public class ClientSchemeHandler extends CefResourceHandlerAdapter
 	public static final String scheme = "client";
 	public static final String domain = "tests";
 
-	private byte[] data_;
-	private String mime_type_;
-	private int offset_ = 0;
+	private byte[] data;
+	private String mimeType;
+	private int offset = 0;
 
 	public ClientSchemeHandler()
 	{
@@ -59,24 +59,24 @@ public class ClientSchemeHandler extends CefResourceHandlerAdapter
 					+ "<input type=\"text\" name=\"field2\">"
 					+ "<input type=\"submit\">" + "</form></body></html>";
 
-			data_ = html.getBytes();
+			data = html.getBytes();
 
 			handled = true;
 			// Set the resulting mime type
-			mime_type_ = "text/html";
+			mimeType = "text/html";
 		} else if (url.endsWith(".png")) {
 			handled = loadContent(url.substring(url.lastIndexOf('/') + 1));
-			mime_type_ = "image/png";
+			mimeType = "image/png";
 		} else if (url.endsWith(".html")) {
 			handled = loadContent(url.substring(url.lastIndexOf('/') + 1));
-			mime_type_ = "text/html";
+			mimeType = "text/html";
 			if (!handled) {
 				String html = "<html><head><title>Error 404</title></head>";
 				html += "<body><h1>Error 404</h1>";
 				html += "File  " + url.substring(url.lastIndexOf('/') + 1)
 						+ " ";
 				html += "does not exist</body></html>";
-				data_ = html.getBytes();
+				data = html.getBytes();
 				handled = true;
 			}
 		}
@@ -91,37 +91,37 @@ public class ClientSchemeHandler extends CefResourceHandlerAdapter
 	}
 
 	@Override
-	public void getResponseHeaders(CefResponse response, IntRef response_length,
+	public void getResponseHeaders(CefResponse response, IntRef responseLength,
 			StringRef redirectUrl)
 	{
-		response.setMimeType(mime_type_);
+		response.setMimeType(mimeType);
 		response.setStatus(200);
 
 		// Set the resulting response length
-		response_length.set(data_.length);
+		responseLength.set(data.length);
 	}
 
 	@Override
-	public synchronized boolean readResponse(byte[] data_out, int bytes_to_read,
-			IntRef bytes_read, CefCallback callback)
+	public synchronized boolean readResponse(byte[] dataOut, int bytesToRead,
+			IntRef bytesRead, CefCallback callback)
 	{
-		boolean has_data = false;
+		boolean hasData = false;
 
-		if (offset_ < data_.length) {
+		if (offset < data.length) {
 			// Copy the next block of data into the buffer.
-			int transfer_size = Math.min(bytes_to_read,
-					(data_.length - offset_));
-			System.arraycopy(data_, offset_, data_out, 0, transfer_size);
-			offset_ += transfer_size;
+			int transferSize = Math.min(bytesToRead,
+					(data.length - offset));
+			System.arraycopy(data, offset, dataOut, 0, transferSize);
+			offset += transferSize;
 
-			bytes_read.set(transfer_size);
-			has_data = true;
+			bytesRead.set(transferSize);
+			hasData = true;
 		} else {
-			offset_ = 0;
-			bytes_read.set(0);
+			offset = 0;
+			bytesRead.set(0);
 		}
 
-		return has_data;
+		return hasData;
 	}
 
 	private boolean loadContent(String resName)
@@ -134,7 +134,7 @@ public class ClientSchemeHandler extends CefResourceHandlerAdapter
 				while ((readByte = inStream.read()) >= 0) {
 					outFile.write(readByte);
 				}
-				data_ = outFile.toByteArray();
+				data = outFile.toByteArray();
 				return true;
 			} catch (IOException e) {
 			}

@@ -14,42 +14,42 @@ import org.cef.handler.CefMessageRouterHandlerAdapter;
 
 public class MessageRouterHandlerEx extends CefMessageRouterHandlerAdapter
 {
-	private final CefClient client_;
-	private final CefMessageRouterConfig config_ = new CefMessageRouterConfig(
+	private final CefClient client;
+	private final CefMessageRouterConfig config = new CefMessageRouterConfig(
 			"myQuery", "myQueryAbort");
-	private CefMessageRouter router_ = null;
+	private CefMessageRouter router = null;
 
 	public MessageRouterHandlerEx(final CefClient client)
 	{
-		client_ = client;
+		this.client = client;
 	}
 
 	@Override
-	public boolean onQuery(CefBrowser browser, CefFrame frame, long query_id,
+	public boolean onQuery(CefBrowser browser, CefFrame frame, long queryId,
 			String request, boolean persistent, CefQueryCallback callback)
 	{
 		if (request.startsWith("hasExtension")) {
-			if (router_ != null) {
+			if (router != null) {
 				callback.success("");
 			} else {
 				callback.failure(0, "");
 			}
 		} else if (request.startsWith("enableExt")) {
-			if (router_ != null) {
+			if (router != null) {
 				callback.failure(-1, "Already enabled");
 			} else {
-				router_ = CefMessageRouter.create(config_,
+				router = CefMessageRouter.create(config,
 						new JavaVersionMessageRouter());
-				client_.addMessageRouter(router_);
+				client.addMessageRouter(router);
 				callback.success("");
 			}
 		} else if (request.startsWith("disableExt")) {
-			if (router_ == null) {
+			if (router == null) {
 				callback.failure(-2, "Already disabled");
 			} else {
-				client_.removeMessageRouter(router_);
-				router_.dispose();
-				router_ = null;
+				client.removeMessageRouter(router);
+				router.dispose();
+				router = null;
 				callback.success("");
 			}
 		} else {
@@ -64,7 +64,7 @@ public class MessageRouterHandlerEx extends CefMessageRouterHandlerAdapter
 	{
 		@Override
 		public boolean onQuery(CefBrowser browser, CefFrame frame,
-				long query_id, String request, boolean persistent,
+				long queryId, String request, boolean persistent,
 				CefQueryCallback callback)
 		{
 			if (request.startsWith("jcefJava")) {

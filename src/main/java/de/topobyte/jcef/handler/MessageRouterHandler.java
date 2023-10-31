@@ -12,7 +12,7 @@ import org.cef.handler.CefMessageRouterHandlerAdapter;
 public class MessageRouterHandler extends CefMessageRouterHandlerAdapter
 {
 	@Override
-	public boolean onQuery(CefBrowser browser, CefFrame frame, long query_id,
+	public boolean onQuery(CefBrowser browser, CefFrame frame, long queryId,
 			String request, boolean persistent, CefQueryCallback callback)
 	{
 		if (request.indexOf("BindingTest:") == 0) {

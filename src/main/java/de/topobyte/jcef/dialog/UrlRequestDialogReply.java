@@ -33,14 +33,14 @@ import org.cef.network.CefURLRequest.Status;
 public class UrlRequestDialogReply extends JDialog
 		implements CefURLRequestClient
 {
-	private long nativeRef_ = 0;
-	private final JLabel statusLabel_ = new JLabel("HTTP-Request status: ");
-	private final JTextArea sentRequest_ = new JTextArea();
-	private final JTextArea repliedResult_ = new JTextArea();
-	private final JButton cancelButton_ = new JButton("Cancel");
-	private CefURLRequest urlRequest_ = null;
-	private final Frame owner_;
-	private ByteArrayOutputStream byteStream_ = new ByteArrayOutputStream();
+	private long nativeRef = 0;
+	private final JLabel statusLabel = new JLabel("HTTP-Request status: ");
+	private final JTextArea sentRequest = new JTextArea();
+	private final JTextArea repliedResult = new JTextArea();
+	private final JButton cancelButton = new JButton("Cancel");
+	private CefURLRequest urlRequest = null;
+	private final Frame owner;
+	private ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
 	public UrlRequestDialogReply(Frame owner, String title)
 	{
@@ -48,7 +48,7 @@ public class UrlRequestDialogReply extends JDialog
 		setLayout(new BorderLayout());
 		setSize(800, 600);
 
-		owner_ = owner;
+		this.owner = owner;
 
 		JPanel controlPanel = new JPanel();
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
@@ -57,36 +57,36 @@ public class UrlRequestDialogReply extends JDialog
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				urlRequest_.dispose();
+				urlRequest.dispose();
 				setVisible(false);
 				dispose();
 			}
 		});
 		controlPanel.add(doneButton);
 
-		cancelButton_.addActionListener(new ActionListener() {
+		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (urlRequest_ != null) {
-					urlRequest_.cancel();
+				if (urlRequest != null) {
+					urlRequest.cancel();
 				}
 			}
 		});
-		cancelButton_.setEnabled(false);
-		controlPanel.add(cancelButton_);
+		cancelButton.setEnabled(false);
+		controlPanel.add(cancelButton);
 
 		JPanel requestPane = createPanelWithTitle("Sent HTTP-Request", 1, 0);
-		requestPane.add(new JScrollPane(sentRequest_));
+		requestPane.add(new JScrollPane(sentRequest));
 
 		JPanel replyPane = createPanelWithTitle("Reply from the server", 1, 0);
-		replyPane.add(new JScrollPane(repliedResult_));
+		replyPane.add(new JScrollPane(repliedResult));
 
 		JPanel contentPane = new JPanel(new GridLayout(2, 0));
 		contentPane.add(requestPane);
 		contentPane.add(replyPane);
 
-		add(statusLabel_, BorderLayout.PAGE_START);
+		add(statusLabel, BorderLayout.PAGE_START);
 		add(contentPane, BorderLayout.CENTER);
 		add(controlPanel, BorderLayout.PAGE_END);
 	}
@@ -103,23 +103,23 @@ public class UrlRequestDialogReply extends JDialog
 	public void send(CefRequest request)
 	{
 		if (request == null) {
-			statusLabel_.setText("HTTP-Request status: FAILED");
-			sentRequest_.append("Can't send CefRequest because it is NULL");
-			cancelButton_.setEnabled(false);
+			statusLabel.setText("HTTP-Request status: FAILED");
+			sentRequest.append("Can't send CefRequest because it is NULL");
+			cancelButton.setEnabled(false);
 			return;
 		}
 
-		urlRequest_ = CefURLRequest.create(request, this);
-		if (urlRequest_ == null) {
-			statusLabel_.setText("HTTP-Request status: FAILED");
-			sentRequest_.append(
+		urlRequest = CefURLRequest.create(request, this);
+		if (urlRequest == null) {
+			statusLabel.setText("HTTP-Request status: FAILED");
+			sentRequest.append(
 					"Can't send CefRequest because creation of CefURLRequest failed.");
-			repliedResult_.append(
+			repliedResult.append(
 					"The native code (CEF) returned a NULL-Pointer for CefURLRequest.");
-			cancelButton_.setEnabled(false);
+			cancelButton.setEnabled(false);
 		} else {
-			sentRequest_.append(request.toString());
-			cancelButton_.setEnabled(true);
+			sentRequest.append(request.toString());
+			cancelButton.setEnabled(true);
 			updateStatus("", false);
 		}
 	}
@@ -127,23 +127,23 @@ public class UrlRequestDialogReply extends JDialog
 	private void updateStatus(final String updateMsg,
 			final boolean printByteStream)
 	{
-		final Status status = urlRequest_.getRequestStatus();
+		final Status status = urlRequest.getRequestStatus();
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run()
 			{
-				statusLabel_.setText("HTTP-Request status: " + status);
+				statusLabel.setText("HTTP-Request status: " + status);
 				if (status != Status.UR_UNKNOWN
 						&& status != Status.UR_IO_PENDING) {
-					cancelButton_.setEnabled(false);
+					cancelButton.setEnabled(false);
 				}
-				repliedResult_.append(updateMsg);
+				repliedResult.append(updateMsg);
 				if (printByteStream) {
 					try {
-						repliedResult_
-								.append("\n\n" + byteStream_.toString("UTF-8"));
+						repliedResult
+								.append("\n\n" + byteStream.toString("UTF-8"));
 					} catch (UnsupportedEncodingException e) {
-						repliedResult_.append("\n\n" + byteStream_.toString());
+						repliedResult.append("\n\n" + byteStream.toString());
 					}
 				}
 			}
@@ -161,13 +161,13 @@ public class UrlRequestDialogReply extends JDialog
 	@Override
 	public void setNativeRef(String identifer, long nativeRef)
 	{
-		nativeRef_ = nativeRef;
+		this.nativeRef = nativeRef;
 	}
 
 	@Override
 	public long getNativeRef(String identifer)
 	{
-		return nativeRef_;
+		return nativeRef;
 	}
 
 	@Override
@@ -199,17 +199,17 @@ public class UrlRequestDialogReply extends JDialog
 
 	@Override
 	public void onDownloadData(CefURLRequest request, byte[] data,
-			int data_length)
+			int dataLength)
 	{
-		byteStream_.write(data, 0, data_length);
-		updateStatus("onDownloadData: " + data_length + " bytes\n", false);
+		byteStream.write(data, 0, dataLength);
+		updateStatus("onDownloadData: " + dataLength + " bytes\n", false);
 	}
 
 	@Override
 	public boolean getAuthCredentials(boolean isProxy, String host, int port,
 			String realm, String scheme, CefAuthCallback callback)
 	{
-		SwingUtilities.invokeLater(new PasswordDialog(owner_, callback));
+		SwingUtilities.invokeLater(new PasswordDialog(owner, callback));
 		return true;
 	}
 }

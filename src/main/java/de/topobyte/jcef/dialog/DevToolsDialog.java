@@ -17,7 +17,7 @@ import org.cef.browser.CefBrowser;
 @SuppressWarnings("serial")
 public class DevToolsDialog extends JDialog
 {
-	private final CefBrowser devTools_;
+	private final CefBrowser devTools;
 
 	public DevToolsDialog(Frame owner, String title, CefBrowser browser)
 	{
@@ -33,8 +33,8 @@ public class DevToolsDialog extends JDialog
 		setSize(800, 600);
 		setLocation(owner.getLocation().x + 20, owner.getLocation().y + 20);
 
-		devTools_ = browser.getDevTools(inspectAt);
-		add(devTools_.getUIComponent());
+		devTools = browser.getDevTools(inspectAt);
+		add(devTools.getUIComponent());
 
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -48,7 +48,7 @@ public class DevToolsDialog extends JDialog
 	@Override
 	public void dispose()
 	{
-		devTools_.close(true);
+		devTools.close(true);
 		super.dispose();
 	}
 }

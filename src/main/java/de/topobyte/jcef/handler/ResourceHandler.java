@@ -31,35 +31,35 @@ public class ResourceHandler extends CefResourceHandlerAdapter
 	}
 
 	@Override
-	public void getResponseHeaders(CefResponse response, IntRef response_length,
+	public void getResponseHeaders(CefResponse response, IntRef responseLength,
 			StringRef redirectUrl)
 	{
 		System.out.println("getResponseHeaders: " + response);
 
-		response_length.set(html.length());
+		responseLength.set(html.length());
 		response.setMimeType("text/html");
 		response.setStatus(200);
 	}
 
 	@Override
-	public boolean readResponse(byte[] data_out, int bytes_to_read,
-			IntRef bytes_read, CefCallback callback)
+	public boolean readResponse(byte[] dataOut, int bytesToRead,
+			IntRef bytesRead, CefCallback callback)
 	{
 		int length = html.length();
 		if (startPos >= length) {
 			return false;
 		}
 
-		// Extract up to bytes_to_read bytes from the html data
-		int endPos = startPos + bytes_to_read;
+		// Extract up to bytesToRead bytes from the html data
+		int endPos = startPos + bytesToRead;
 		String dataToSend = (endPos > length) ? html.substring(startPos)
 				: html.substring(startPos, endPos);
 
-		// Copy extracted bytes into data_out and set the read length
-		// to bytes_read.
-		ByteBuffer result = ByteBuffer.wrap(data_out);
+		// Copy extracted bytes into dataOut and set the read length
+		// to bytesRead.
+		ByteBuffer result = ByteBuffer.wrap(dataOut);
 		result.put(dataToSend.getBytes());
-		bytes_read.set(dataToSend.length());
+		bytesRead.set(dataToSend.length());
 
 		startPos = endPos;
 		return true;

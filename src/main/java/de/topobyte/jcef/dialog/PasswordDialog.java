@@ -20,27 +20,27 @@ import org.cef.callback.CefAuthCallback;
 @SuppressWarnings("serial")
 public class PasswordDialog extends JDialog implements Runnable
 {
-	private final JTextField username_ = new JTextField(20);
-	private final JPasswordField password_ = new JPasswordField(20);
-	private final CefAuthCallback callback_;
+	private final JTextField username = new JTextField(20);
+	private final JPasswordField password = new JPasswordField(20);
+	private final CefAuthCallback callback;
 
 	public PasswordDialog(Frame owner, CefAuthCallback callback)
 	{
 		super(owner, "Authentication required", true);
-		callback_ = callback;
+		this.callback = callback;
 		setSize(400, 100);
 		setLayout(new GridLayout(0, 2));
 		add(new JLabel("Username:"));
-		add(username_);
+		add(username);
 		add(new JLabel("Password:"));
-		add(password_);
+		add(password);
 
 		JButton abortButton = new JButton("Abort");
 		abortButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				callback_.cancel();
+				callback.cancel();
 				setVisible(false);
 				dispose();
 			}
@@ -52,11 +52,12 @@ public class PasswordDialog extends JDialog implements Runnable
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (username_.getText().isEmpty()) {
+				if (username.getText().isEmpty()) {
 					return;
 				}
-				String password = new String(password_.getPassword());
-				callback_.Continue(username_.getText(), password);
+				String password = new String(
+						PasswordDialog.this.password.getPassword());
+				callback.Continue(username.getText(), password);
 				setVisible(false);
 				dispose();
 			}

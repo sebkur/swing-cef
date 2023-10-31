@@ -21,12 +21,12 @@ import de.topobyte.jcef.dialog.ShowTextDialog;
 
 public class ContextMenuHandler implements CefContextMenuHandler
 {
-	private final Frame owner_;
-	private Map<Integer, String> suggestions_ = new HashMap<>();
+	private final Frame owner;
+	private Map<Integer, String> suggestions = new HashMap<>();
 
 	public ContextMenuHandler(Frame owner)
 	{
-		owner_ = owner;
+		this.owner = owner;
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class ContextMenuHandler implements CefContextMenuHandler
 		int id = MenuId.MENU_ID_SPELLCHECK_SUGGESTION_0;
 		for (String suggestedWord : suggestions) {
 			model.addItem(id, suggestedWord);
-			suggestions_.put(id, suggestedWord);
+			this.suggestions.put(id, suggestedWord);
 			if (++id > MenuId.MENU_ID_SPELLCHECK_SUGGESTION_LAST) {
 				break;
 			}
@@ -77,12 +77,12 @@ public class ContextMenuHandler implements CefContextMenuHandler
 	{
 		switch (commandId) {
 		case MenuId.MENU_ID_VIEW_SOURCE:
-			ShowTextDialog visitor = new ShowTextDialog(owner_,
+			ShowTextDialog visitor = new ShowTextDialog(owner,
 					"Source of \"" + browser.getURL() + "\"");
 			browser.getSource(visitor);
 			return true;
 		case MenuId.MENU_ID_FIND:
-			SearchDialog search = new SearchDialog(owner_, browser);
+			SearchDialog search = new SearchDialog(owner, browser);
 			search.setVisible(true);
 			return true;
 		case MenuId.MENU_ID_USER_FIRST:
@@ -90,7 +90,7 @@ public class ContextMenuHandler implements CefContextMenuHandler
 			return true;
 		default:
 			if (commandId >= MenuId.MENU_ID_SPELLCHECK_SUGGESTION_0) {
-				String newWord = suggestions_.get(commandId);
+				String newWord = suggestions.get(commandId);
 				if (newWord != null) {
 					System.err.println("replacing " + params.getMisspelledWord()
 							+ " with " + newWord);
@@ -105,6 +105,6 @@ public class ContextMenuHandler implements CefContextMenuHandler
 	@Override
 	public void onContextMenuDismissed(CefBrowser browser, CefFrame frame)
 	{
-		suggestions_.clear();
+		suggestions.clear();
 	}
 }

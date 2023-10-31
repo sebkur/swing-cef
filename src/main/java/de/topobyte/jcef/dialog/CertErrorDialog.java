@@ -13,33 +13,33 @@ import org.cef.handler.CefLoadHandler.ErrorCode;
 
 public class CertErrorDialog implements Runnable
 {
-	private final Frame owner_;
-	private final ErrorCode cert_error_;
-	private final String request_url_;
-	private final CefCallback callback_;
+	private final Frame owner;
+	private final ErrorCode certError;
+	private final String requestUrl;
+	private final CefCallback callback;
 
-	public CertErrorDialog(Frame owner, ErrorCode cert_error,
-			String request_url, CefCallback callback)
+	public CertErrorDialog(Frame owner, ErrorCode certError,
+			String requestUrl, CefCallback callback)
 	{
-		owner_ = owner;
-		cert_error_ = cert_error;
-		request_url_ = request_url;
-		callback_ = callback;
+		this.owner = owner;
+		this.certError = certError;
+		this.requestUrl = requestUrl;
+		this.callback = callback;
 	}
 
 	@Override
 	public void run()
 	{
-		int dialogResult = JOptionPane.showConfirmDialog(owner_,
-				"An certificate error (" + cert_error_ + ") occurreed "
-						+ "while requesting\n" + request_url_
+		int dialogResult = JOptionPane.showConfirmDialog(owner,
+				"An certificate error (" + certError + ") occurreed "
+						+ "while requesting\n" + requestUrl
 						+ "\nDo you want to proceed anyway?",
 				"Certificate error", JOptionPane.YES_NO_OPTION,
 				JOptionPane.ERROR_MESSAGE);
 		if (dialogResult == JOptionPane.YES_OPTION) {
-			callback_.Continue();
+			callback.Continue();
 		} else {
-			callback_.cancel();
+			callback.cancel();
 		}
 	}
 }

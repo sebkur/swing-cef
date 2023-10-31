@@ -19,7 +19,7 @@ public class ResourceSetErrorHandler extends CefResourceHandlerAdapter
 	}
 
 	@Override
-	public void getResponseHeaders(CefResponse response, IntRef response_length,
+	public void getResponseHeaders(CefResponse response, IntRef responseLength,
 			StringRef redirectUrl)
 	{
 		response.setError(ErrorCode.ERR_NOT_IMPLEMENTED);

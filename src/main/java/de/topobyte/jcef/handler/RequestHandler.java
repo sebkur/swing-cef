@@ -31,16 +31,16 @@ import de.topobyte.jcef.dialog.PasswordDialog;
 public class RequestHandler extends CefResourceRequestHandlerAdapter
 		implements CefRequestHandler
 {
-	private final Frame owner_;
+	private final Frame owner;
 
 	public RequestHandler(Frame owner)
 	{
-		owner_ = owner;
+		this.owner = owner;
 	}
 
 	@Override
 	public boolean onBeforeBrowse(CefBrowser browser, CefFrame frame,
-			CefRequest request, boolean user_gesture, boolean is_redirect)
+			CefRequest request, boolean userGesture, boolean isRedirect)
 	{
 		CefPostData postData = request.getPostData();
 		if (postData != null) {
@@ -63,7 +63,7 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 						@Override
 						public void run()
 						{
-							JOptionPane.showMessageDialog(owner_,
+							JOptionPane.showMessageDialog(owner,
 									"The request was rejected because you've entered \"ignore\" into the form.");
 						}
 					});
@@ -76,7 +76,7 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 
 	@Override
 	public boolean onOpenURLFromTab(CefBrowser browser, CefFrame frame,
-			String target_url, boolean user_gesture)
+			String targetUrl, boolean userGesture)
 	{
 		return false;
 	}
@@ -170,20 +170,20 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 	}
 
 	@Override
-	public boolean getAuthCredentials(CefBrowser browser, String origin_url,
+	public boolean getAuthCredentials(CefBrowser browser, String originUrl,
 			boolean isProxy, String host, int port, String realm, String scheme,
 			CefAuthCallback callback)
 	{
-		SwingUtilities.invokeLater(new PasswordDialog(owner_, callback));
+		SwingUtilities.invokeLater(new PasswordDialog(owner, callback));
 		return true;
 	}
 
 	@Override
-	public boolean onCertificateError(CefBrowser browser, ErrorCode cert_error,
-			String request_url, CefCallback callback)
+	public boolean onCertificateError(CefBrowser browser, ErrorCode certError,
+			String requestUrl, CefCallback callback)
 	{
 		SwingUtilities.invokeLater(
-				new CertErrorDialog(owner_, cert_error, request_url, callback));
+				new CertErrorDialog(owner, certError, requestUrl, callback));
 		return true;
 	}
 

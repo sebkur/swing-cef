@@ -46,7 +46,7 @@ public class UrlRequestDialog extends JDialog
 	private final TableModel postDataModel = new TableModel(false);
 	private final JTextField urlField;
 	private final JTextField cookieUrl;
-	private final Frame owner_;
+	private final Frame owner;
 
 	private CefRequest createRequest()
 	{
@@ -56,7 +56,7 @@ public class UrlRequestDialog extends JDialog
 				@Override
 				public void run()
 				{
-					JOptionPane.showMessageDialog(owner_,
+					JOptionPane.showMessageDialog(owner,
 							"Please specify at least an URL. Otherwise the CefRequest is invalid");
 				}
 			});
@@ -93,7 +93,7 @@ public class UrlRequestDialog extends JDialog
 				@Override
 				public void run()
 				{
-					JOptionPane.showMessageDialog(owner_,
+					JOptionPane.showMessageDialog(owner,
 							"The methods POST and PUT require at least one row of data.");
 				}
 			});
@@ -156,7 +156,7 @@ public class UrlRequestDialog extends JDialog
 		setSize(1200, 600);
 		setLayout(new BorderLayout());
 
-		owner_ = owner;
+		this.owner = owner;
 
 		// URL for the request
 		urlField = new JTextField("http://");
@@ -257,7 +257,7 @@ public class UrlRequestDialog extends JDialog
 				}
 
 				UrlRequestDialogReply handleRequest = new UrlRequestDialogReply(
-						owner_, getTitle() + " - Result");
+						owner, getTitle() + " - Result");
 				handleRequest.send(request);
 				handleRequest.setVisible(true);
 				setVisible(false);
@@ -345,12 +345,12 @@ public class UrlRequestDialog extends JDialog
 	{
 		private final String[] columnNames;
 		private Vector<Object[]> rowData = new Vector<>();
-		private final boolean hasKeyColumn_;
+		private final boolean hasKeyColumn;
 
 		public TableModel(boolean hasKeyColumn)
 		{
 			super();
-			hasKeyColumn_ = hasKeyColumn;
+			this.hasKeyColumn = hasKeyColumn;
 			if (hasKeyColumn) {
 				columnNames = new String[] { "Key", "Value", "" };
 			} else {
@@ -361,7 +361,7 @@ public class UrlRequestDialog extends JDialog
 		public void newDefaultEntry()
 		{
 			int row = rowData.size();
-			if (hasKeyColumn_) {
+			if (hasKeyColumn) {
 				Object[] rowEntry = { "key", "value", Boolean.valueOf(false) };
 				rowData.addElement(rowEntry);
 			} else {
@@ -373,7 +373,7 @@ public class UrlRequestDialog extends JDialog
 
 		public void removeSelected()
 		{
-			int idx = hasKeyColumn_ ? 2 : 1;
+			int idx = hasKeyColumn ? 2 : 1;
 			for (int i = 0; i < rowData.size(); ++i) {
 				if ((Boolean) rowData.get(i)[idx]) {
 					rowData.remove(i);
@@ -386,7 +386,7 @@ public class UrlRequestDialog extends JDialog
 		public void addEntry(String key, String value)
 		{
 			int row = rowData.size();
-			if (hasKeyColumn_) {
+			if (hasKeyColumn) {
 				Object[] rowEntry = { key, value, Boolean.valueOf(false) };
 				rowData.addElement(rowEntry);
 			} else {

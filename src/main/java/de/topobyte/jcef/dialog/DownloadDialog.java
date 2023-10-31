@@ -28,10 +28,10 @@ import org.cef.handler.CefDownloadHandler;
 @SuppressWarnings("serial")
 public class DownloadDialog extends JDialog implements CefDownloadHandler
 {
-	private final Frame owner_;
-	private final Map<Integer, DownloadObject> downloadObjects_ = new HashMap<>();
-	private final JPanel downloadPanel_ = new JPanel();
-	private final DownloadDialog dialog_;
+	private final Frame owner;
+	private final Map<Integer, DownloadObject> downloadObjects = new HashMap<>();
+	private final JPanel downloadPanel = new JPanel();
+	private final DownloadDialog dialog;
 
 	public DownloadDialog(Frame owner)
 	{
@@ -39,72 +39,70 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler
 		setVisible(false);
 		setSize(400, 300);
 
-		owner_ = owner;
-		dialog_ = this;
-		downloadPanel_
-				.setLayout(new BoxLayout(downloadPanel_, BoxLayout.Y_AXIS));
-		add(downloadPanel_);
+		this.owner = owner;
+		this.dialog = this;
+		downloadPanel.setLayout(new BoxLayout(downloadPanel, BoxLayout.Y_AXIS));
+		add(downloadPanel);
 	}
 
 	private class DownloadObject extends JPanel
 	{
-		private boolean isHidden_ = true;
-		private final int identifier_;
-		private JLabel fileName_ = new JLabel();
-		private JLabel status_ = new JLabel();
-		private JButton dlAbort_ = new JButton();
-		private JButton dlRemoveEntry_ = new JButton("x");
-		private CefDownloadItemCallback callback_;
-		private Color bgColor_;
+		private boolean isHidden = true;
+		private final int identifier;
+		private JLabel fileName = new JLabel();
+		private JLabel status = new JLabel();
+		private JButton dlAbort = new JButton();
+		private JButton dlRemoveEntry = new JButton("x");
+		private CefDownloadItemCallback callback;
+		private Color bgColor;
 
 		DownloadObject(CefDownloadItem downloadItem, String suggestedName)
 		{
 			super();
 			setOpaque(true);
 			setLayout(new BorderLayout());
-			setMaximumSize(new Dimension(dialog_.getWidth() - 10, 80));
-			identifier_ = downloadItem.getId();
-			bgColor_ = identifier_ % 2 == 0 ? Color.WHITE : Color.YELLOW;
-			setBackground(bgColor_);
+			setMaximumSize(new Dimension(dialog.getWidth() - 10, 80));
+			identifier = downloadItem.getId();
+			bgColor = identifier % 2 == 0 ? Color.WHITE : Color.YELLOW;
+			setBackground(bgColor);
 
-			fileName_.setText(suggestedName);
-			add(fileName_, BorderLayout.NORTH);
+			fileName.setText(suggestedName);
+			add(fileName, BorderLayout.NORTH);
 
-			status_.setAlignmentX(LEFT_ALIGNMENT);
-			add(status_, BorderLayout.CENTER);
+			status.setAlignmentX(LEFT_ALIGNMENT);
+			add(status, BorderLayout.CENTER);
 
 			JPanel controlPane = new JPanel();
 			controlPane.setLayout(new BoxLayout(controlPane, BoxLayout.X_AXIS));
 			controlPane.setOpaque(true);
-			controlPane.setBackground(bgColor_);
-			dlAbort_.setText("Abort");
-			dlAbort_.setEnabled(false);
-			dlAbort_.addActionListener(new ActionListener() {
+			controlPane.setBackground(bgColor);
+			dlAbort.setText("Abort");
+			dlAbort.setEnabled(false);
+			dlAbort.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					if (callback_ != null) {
-						fileName_.setText("ABORTED - " + fileName_.getText());
-						callback_.cancel();
+					if (callback != null) {
+						fileName.setText("ABORTED - " + fileName.getText());
+						callback.cancel();
 					}
 				}
 			});
-			controlPane.add(dlAbort_);
+			controlPane.add(dlAbort);
 
-			dlRemoveEntry_.setEnabled(false);
-			dlRemoveEntry_.addActionListener(new ActionListener() {
+			dlRemoveEntry.setEnabled(false);
+			dlRemoveEntry.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					DownloadObject removed = downloadObjects_
-							.remove(identifier_);
+					DownloadObject removed = downloadObjects.remove(identifier);
 					if (removed != null) {
-						downloadPanel_.remove(removed);
-						dialog_.repaint();
+						downloadPanel.remove(removed);
+						dialog.repaint();
 					}
 				}
 			});
-			controlPane.add(dlRemoveEntry_);
+			controlPane.add(dlRemoveEntry);
 			add(controlPane, BorderLayout.SOUTH);
 
 			update(downloadItem, null);
@@ -135,23 +133,23 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler
 			String speed = humanReadableByteCount(
 					downloadItem.getCurrentSpeed()) + "it/s";
 
-			if (downloadItem.getReceivedBytes() >= 5 && isHidden_) {
-				dialog_.setVisible(true);
-				dialog_.toFront();
-				owner_.toBack();
-				isHidden_ = false;
+			if (downloadItem.getReceivedBytes() >= 5 && isHidden) {
+				dialog.setVisible(true);
+				dialog.toFront();
+				owner.toBack();
+				isHidden = false;
 			}
 			Runtime.getRuntime().runFinalization();
 
-			callback_ = callback;
-			status_.setText(rcvBytes + " of " + totalBytes + " - "
+			this.callback = callback;
+			status.setText(rcvBytes + " of " + totalBytes + " - "
 					+ percentComplete + "%" + " - " + speed);
-			dlAbort_.setEnabled(downloadItem.isInProgress());
-			dlRemoveEntry_.setEnabled(!downloadItem.isInProgress()
+			dlAbort.setEnabled(downloadItem.isInProgress());
+			dlRemoveEntry.setEnabled(!downloadItem.isInProgress()
 					|| downloadItem.isCanceled() || downloadItem.isComplete());
 			if (!downloadItem.isInProgress() && !downloadItem.isCanceled()
 					&& !downloadItem.isComplete()) {
-				fileName_.setText("FAILED - " + fileName_.getText());
+				fileName.setText("FAILED - " + fileName.getText());
 				callback.cancel();
 			}
 		}
@@ -166,15 +164,15 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler
 
 		DownloadObject dlObject = new DownloadObject(downloadItem,
 				suggestedName);
-		downloadObjects_.put(downloadItem.getId(), dlObject);
-		downloadPanel_.add(dlObject);
+		downloadObjects.put(downloadItem.getId(), dlObject);
+		downloadPanel.add(dlObject);
 	}
 
 	@Override
 	public void onDownloadUpdated(CefBrowser browser,
 			CefDownloadItem downloadItem, CefDownloadItemCallback callback)
 	{
-		DownloadObject dlObject = downloadObjects_.get(downloadItem.getId());
+		DownloadObject dlObject = downloadObjects.get(downloadItem.getId());
 		if (dlObject == null) {
 			return;
 		}

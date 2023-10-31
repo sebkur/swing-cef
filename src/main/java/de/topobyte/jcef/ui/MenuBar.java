@@ -62,42 +62,42 @@ public class MenuBar extends JMenuBar
 {
 	class SaveAs implements CefStringVisitor
 	{
-		private PrintWriter fileWriter_;
+		private PrintWriter fileWriter;
 
 		public SaveAs(String fName)
 				throws FileNotFoundException, UnsupportedEncodingException
 		{
-			fileWriter_ = new PrintWriter(fName, "UTF-8");
+			fileWriter = new PrintWriter(fName, "UTF-8");
 		}
 
 		@Override
 		public void visit(String string)
 		{
-			fileWriter_.write(string);
-			fileWriter_.close();
+			fileWriter.write(string);
+			fileWriter.close();
 		}
 	}
 
-	private final MainFrame owner_;
-	private final CefBrowser browser_;
-	private String last_selected_file_ = "";
-	private final JMenu bookmarkMenu_;
-	private final ControlPanel control_pane_;
-	private final DownloadDialog downloadDialog_;
-	private final CefCookieManager cookieManager_;
-	private boolean reparentPending_ = false;
+	private final MainFrame owner;
+	private final CefBrowser browser;
+	private String lastSelectedFile = "";
+	private final JMenu bookmarkMenu;
+	private final ControlPanel controlPane;
+	private final DownloadDialog downloadDialog;
+	private final CefCookieManager cookieManager;
+	private boolean reparentPending = false;
 
 	public MenuBar(MainFrame owner, CefBrowser browser,
-			ControlPanel control_pane, DownloadDialog downloadDialog,
+			ControlPanel controlPane, DownloadDialog downloadDialog,
 			CefCookieManager cookieManager)
 	{
-		owner_ = owner;
-		browser_ = browser;
-		control_pane_ = control_pane;
-		downloadDialog_ = downloadDialog;
-		cookieManager_ = cookieManager;
+		this.owner = owner;
+		this.browser = browser;
+		this.controlPane = controlPane;
+		this.downloadDialog = downloadDialog;
+		this.cookieManager = cookieManager;
 
-		setEnabled(browser_ != null);
+		setEnabled(browser != null);
 
 		JMenu fileMenu = new JMenu("File");
 
@@ -107,14 +107,14 @@ public class MenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent arg0)
 			{
 				JFileChooser fc = new JFileChooser(
-						new File(last_selected_file_));
+						new File(lastSelectedFile));
 				// Show open dialog; this method does not return until the
 				// dialog is closed.
-				fc.showOpenDialog(owner_);
+				fc.showOpenDialog(owner);
 				File selectedFile = fc.getSelectedFile();
 				if (selectedFile != null) {
-					last_selected_file_ = selectedFile.getAbsolutePath();
-					browser_.loadURL(
+					lastSelectedFile = selectedFile.getAbsolutePath();
+					browser.loadURL(
 							"file:///" + selectedFile.getAbsolutePath());
 				}
 			}
@@ -134,18 +134,18 @@ public class MenuBar extends JMenuBar
 							try {
 								SaveAs saveContent = new SaveAs(
 										filePaths.get(0));
-								browser_.getSource(saveContent);
+								browser.getSource(saveContent);
 							} catch (FileNotFoundException
 									| UnsupportedEncodingException e) {
-								browser_.executeJavaScript(
+								browser.executeJavaScript(
 										"alert(\"Can't save file\");",
-										control_pane_.getAddress(), 0);
+										controlPane.getAddress(), 0);
 							}
 						}
 					}
 				};
-				browser_.runFileDialog(FileDialogMode.FILE_DIALOG_SAVE,
-						owner_.getTitle(), "index.html", null, 0, callback);
+				browser.runFileDialog(FileDialogMode.FILE_DIALOG_SAVE,
+						owner.getTitle(), "index.html", null, 0, callback);
 			}
 		});
 		fileMenu.add(openFileDialog);
@@ -155,7 +155,7 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.print();
+				browser.print();
 			}
 		});
 		fileMenu.add(printItem);
@@ -166,7 +166,7 @@ public class MenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				JFileChooser fc = new JFileChooser();
-				fc.showSaveDialog(owner_);
+				fc.showSaveDialog(owner);
 				File selectedFile = fc.getSelectedFile();
 				if (selectedFile != null) {
 					CefPdfPrintSettings pdfSettings = new CefPdfPrintSettings();
@@ -186,13 +186,13 @@ public class MenuBar extends JMenuBar
 										{
 											if (ok) {
 												JOptionPane.showMessageDialog(
-														owner_,
+														owner,
 														"PDF saved to " + path,
 														"Success",
 														JOptionPane.INFORMATION_MESSAGE);
 											} else {
 												JOptionPane.showMessageDialog(
-														owner_, "PDF failed",
+														owner, "PDF failed",
 														"Failed",
 														JOptionPane.ERROR_MESSAGE);
 											}
@@ -210,7 +210,7 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				new SearchDialog(owner_, browser_).setVisible(true);
+				new SearchDialog(owner, browser).setVisible(true);
 			}
 		});
 		fileMenu.add(searchItem);
@@ -222,7 +222,7 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.viewSource();
+				browser.viewSource();
 			}
 		});
 		fileMenu.add(viewSource);
@@ -232,9 +232,9 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				ShowTextDialog visitor = new ShowTextDialog(owner_,
-						"Source of \"" + control_pane_.getAddress() + "\"");
-				browser_.getSource(visitor);
+				ShowTextDialog visitor = new ShowTextDialog(owner,
+						"Source of \"" + controlPane.getAddress() + "\"");
+				browser.getSource(visitor);
 			}
 		});
 		fileMenu.add(getSource);
@@ -244,9 +244,9 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				ShowTextDialog visitor = new ShowTextDialog(owner_,
-						"Content of \"" + control_pane_.getAddress() + "\"");
-				browser_.getText(visitor);
+				ShowTextDialog visitor = new ShowTextDialog(owner,
+						"Content of \"" + controlPane.getAddress() + "\"");
+				browser.getText(visitor);
 			}
 		});
 		fileMenu.add(getText);
@@ -258,7 +258,7 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				downloadDialog_.setVisible(true);
+				downloadDialog.setVisible(true);
 			}
 		});
 		fileMenu.add(showDownloads);
@@ -269,7 +269,7 @@ public class MenuBar extends JMenuBar
 			public void actionPerformed(ActionEvent e)
 			{
 				CookieManagerDialog cookieManager = new CookieManagerDialog(
-						owner_, "Cookie Manager", cookieManager_);
+						owner, "Cookie Manager", MenuBar.this.cookieManager);
 				cookieManager.setVisible(true);
 			}
 		});
@@ -282,24 +282,24 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				owner_.dispatchEvent(
-						new WindowEvent(owner_, WindowEvent.WINDOW_CLOSING));
+				owner.dispatchEvent(
+						new WindowEvent(owner, WindowEvent.WINDOW_CLOSING));
 			}
 		});
 		fileMenu.add(exitItem);
 
-		bookmarkMenu_ = new JMenu("Bookmarks");
+		bookmarkMenu = new JMenu("Bookmarks");
 
 		JMenuItem addBookmarkItem = new JMenuItem("Add bookmark");
 		addBookmarkItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				addBookmark(owner_.getTitle(), control_pane_.getAddress());
+				addBookmark(owner.getTitle(), controlPane.getAddress());
 			}
 		});
-		bookmarkMenu_.add(addBookmarkItem);
-		bookmarkMenu_.addSeparator();
+		bookmarkMenu.add(addBookmarkItem);
+		bookmarkMenu.addSeparator();
 
 		JMenu testMenu = new JMenu("Tests");
 
@@ -308,8 +308,8 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.executeJavaScript("alert('Hello World');",
-						control_pane_.getAddress(), 1);
+				browser.executeJavaScript("alert('Hello World');",
+						controlPane.getAddress(), 1);
 			}
 		});
 		testMenu.add(testJSItem);
@@ -320,7 +320,7 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.executeJavaScript("alert('Never displayed');",
+				browser.executeJavaScript("alert('Never displayed');",
 						"http://dontshow.me", 1);
 			}
 		});
@@ -331,7 +331,7 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.loadURL(DataUri.create("text/html",
+				browser.loadURL(DataUri.create("text/html",
 						"<html><body><h1>Hello World</h1></body></html>"));
 			}
 		});
@@ -359,7 +359,7 @@ public class MenuBar extends JMenuBar
 				form += "<p>See implementation of <u>tests.RequestHandler.onBeforeResourceLoad(CefBrowser, CefRequest)</u> for details</p>";
 				form += "</form>";
 				form += "</body></html>";
-				browser_.loadURL(DataUri.create("text/html", form));
+				browser.loadURL(DataUri.create("text/html", form));
 			}
 		});
 		testMenu.add(showForm);
@@ -369,7 +369,7 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				String searchFor = JOptionPane.showInputDialog(owner_,
+				String searchFor = JOptionPane.showInputDialog(owner,
 						"Search on google:");
 				if (searchFor != null && !searchFor.isEmpty()) {
 					CefRequest myRequest = CefRequest.create();
@@ -377,7 +377,7 @@ public class MenuBar extends JMenuBar
 					myRequest.setURL("http://www.google.com/#q=" + searchFor);
 					myRequest.setFirstPartyForCookies(
 							"http://www.google.com/#q=" + searchFor);
-					browser_.loadRequest(myRequest);
+					browser.loadRequest(myRequest);
 				}
 			}
 		});
@@ -390,24 +390,24 @@ public class MenuBar extends JMenuBar
 			{
 				String info = "<html><head><title>Browser status</title></head>";
 				info += "<body><h1>Browser status</h1><table border=\"0\">";
-				info += "<tr><td>CanGoBack</td><td>" + browser_.canGoBack()
+				info += "<tr><td>CanGoBack</td><td>" + browser.canGoBack()
 						+ "</td></tr>";
-				info += "<tr><td>CanGoForward</td><td>"
-						+ browser_.canGoForward() + "</td></tr>";
-				info += "<tr><td>IsLoading</td><td>" + browser_.isLoading()
+				info += "<tr><td>CanGoForward</td><td>" + browser.canGoForward()
 						+ "</td></tr>";
-				info += "<tr><td>isPopup</td><td>" + browser_.isPopup()
+				info += "<tr><td>IsLoading</td><td>" + browser.isLoading()
 						+ "</td></tr>";
-				info += "<tr><td>hasDocument</td><td>" + browser_.hasDocument()
+				info += "<tr><td>isPopup</td><td>" + browser.isPopup()
 						+ "</td></tr>";
-				info += "<tr><td>Url</td><td>" + browser_.getURL()
+				info += "<tr><td>hasDocument</td><td>" + browser.hasDocument()
 						+ "</td></tr>";
-				info += "<tr><td>Zoom-Level</td><td>" + browser_.getZoomLevel()
+				info += "<tr><td>Url</td><td>" + browser.getURL()
+						+ "</td></tr>";
+				info += "<tr><td>Zoom-Level</td><td>" + browser.getZoomLevel()
 						+ "</td></tr>";
 				info += "</table></body></html>";
 				String js = "var x=window.open(); x.document.open(); x.document.write('"
 						+ info + "'); x.document.close();";
-				browser_.executeJavaScript(js, "", 0);
+				browser.executeJavaScript(js, "", 0);
 			}
 		});
 		testMenu.add(showInfo);
@@ -417,8 +417,8 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				DevToolsDialog devToolsDlg = new DevToolsDialog(owner_,
-						"DEV Tools", browser_);
+				DevToolsDialog devToolsDlg = new DevToolsDialog(owner,
+						"DEV Tools", browser);
 				devToolsDlg.addComponentListener(new ComponentAdapter() {
 					@Override
 					public void componentHidden(ComponentEvent e)
@@ -437,7 +437,7 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				UrlRequestDialog dlg = new UrlRequestDialog(owner_,
+				UrlRequestDialog dlg = new UrlRequestDialog(owner,
 						"URL Request Test");
 				dlg.setVisible(true);
 			}
@@ -456,21 +456,21 @@ public class MenuBar extends JMenuBar
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						if (reparentPending_) {
+						if (reparentPending) {
 							return;
 						}
-						reparentPending_ = true;
+						reparentPending = true;
 
 						if (reparentButton.getText().equals("Reparent <")) {
-							owner_.removeBrowser(new Runnable() {
+							owner.removeBrowser(new Runnable() {
 								@Override
 								public void run()
 								{
-									newFrame.add(browser_.getUIComponent(),
+									newFrame.add(browser.getUIComponent(),
 											BorderLayout.CENTER);
-									newFrame.setBrowser(browser_);
+									newFrame.setBrowser(browser);
 									reparentButton.setText("Reparent >");
-									reparentPending_ = false;
+									reparentPending = false;
 								}
 							});
 						} else {
@@ -478,17 +478,17 @@ public class MenuBar extends JMenuBar
 								@Override
 								public void run()
 								{
-									JRootPane rootPane = (JRootPane) owner_
+									JRootPane rootPane = (JRootPane) owner
 											.getComponent(0);
 									Container container = rootPane
 											.getContentPane();
 									JPanel panel = (JPanel) container
 											.getComponent(0);
-									panel.add(browser_.getUIComponent());
-									owner_.setBrowser(browser_);
-									owner_.revalidate();
+									panel.add(browser.getUIComponent());
+									owner.setBrowser(browser);
+									owner.revalidate();
 									reparentButton.setText("Reparent <");
-									reparentPending_ = false;
+									reparentPending = false;
 								}
 							});
 						}
@@ -593,18 +593,18 @@ public class MenuBar extends JMenuBar
 		testMenu.add(screenshotAsync);
 
 		add(fileMenu);
-		add(bookmarkMenu_);
+		add(bookmarkMenu);
 		add(testMenu);
 	}
 
 	public void addBookmark(String name, String URL)
 	{
-		if (bookmarkMenu_ == null) {
+		if (bookmarkMenu == null) {
 			return;
 		}
 
 		// Test if the bookmark already exists. If yes, update URL
-		Component[] entries = bookmarkMenu_.getMenuComponents();
+		Component[] entries = bookmarkMenu.getMenuComponents();
 		for (Component itemEntry : entries) {
 			if (!(itemEntry instanceof JMenuItem)) {
 				continue;
@@ -623,10 +623,10 @@ public class MenuBar extends JMenuBar
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				browser_.loadURL(e.getActionCommand());
+				browser.loadURL(e.getActionCommand());
 			}
 		});
-		bookmarkMenu_.add(menuItem);
+		bookmarkMenu.add(menuItem);
 		validate();
 	}
 
@@ -646,6 +646,6 @@ public class MenuBar extends JMenuBar
 
 	public void addBookmarkSeparator()
 	{
-		bookmarkMenu_.addSeparator();
+		bookmarkMenu.addSeparator();
 	}
 }

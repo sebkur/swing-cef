@@ -20,11 +20,11 @@ public class SearchSchemeHandler extends CefResourceHandlerAdapter
 	public static final String scheme = "search";
 	public static final String domain = "";
 
-	private final CefBrowser browser_;
+	private final CefBrowser browser;
 
 	public SearchSchemeHandler(CefBrowser browser)
 	{
-		browser_ = browser;
+		this.browser = browser;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class SearchSchemeHandler extends CefResourceHandlerAdapter
 			newRequest.setMethod("GET");
 			newRequest.setURL(newUrl);
 			newRequest.setFirstPartyForCookies(newUrl);
-			browser_.loadRequest(newRequest);
+			browser.loadRequest(newRequest);
 		}
 		return false;
 	}

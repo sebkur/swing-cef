@@ -12,17 +12,17 @@ import org.cef.misc.BoolRef;
 public class JSDialogHandler extends CefJSDialogHandlerAdapter
 {
 	@Override
-	public boolean onJSDialog(CefBrowser browser, String origin_url,
-			JSDialogType dialog_type, String message_text,
-			String default_prompt_text, CefJSDialogCallback callback,
-			BoolRef suppress_message)
+	public boolean onJSDialog(CefBrowser browser, String originUrl,
+			JSDialogType dialogType, String messageText,
+			String defaultPromptText, CefJSDialogCallback callback,
+			BoolRef suppressMessage)
 	{
-		if (message_text.equalsIgnoreCase("Never displayed")) {
-			suppress_message.set(true);
-			System.out.println("The " + dialog_type + " from origin \""
-					+ origin_url + "\" was suppressed.");
+		if (messageText.equalsIgnoreCase("Never displayed")) {
+			suppressMessage.set(true);
+			System.out.println("The " + dialogType + " from origin \""
+					+ originUrl + "\" was suppressed.");
 			System.out.println("   The content of the suppressed dialog was: \""
-					+ message_text + "\"");
+					+ messageText + "\"");
 		}
 		return false;
 	}
