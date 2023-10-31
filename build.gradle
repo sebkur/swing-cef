@@ -84,6 +84,9 @@ pinpit.desktop {
         nativeDistributions {
             jvmVendor = "adoptium"
             jvmVersion = "17.0.8.1+1"
+            jvmArgs("--add-opens", "java.desktop/sun.awt=ALL-UNNAMED")
+            jvmArgs("--add-opens", "java.desktop/sun.lwawt=ALL-UNNAMED")
+            jvmArgs("--add-opens", "java.desktop/sun.lwawt.macosx=ALL-UNNAMED")
 
             packageName = "Swing CEF"
             packageVersion = version
