@@ -240,7 +240,7 @@ public class MainFrame extends BrowserFrame
 		});
 
 		// Create the browser.
-		CefBrowser browser = client.createBrowser("http://www.google.com",
+		CefBrowser browser = client.createBrowser("http://www.duckduckgo.com",
 				osrEnabled, transparentPaintingEnabled, null);
 		setBrowser(browser);
 
