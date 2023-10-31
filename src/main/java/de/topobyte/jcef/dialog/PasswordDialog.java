@@ -18,7 +18,7 @@ import javax.swing.JTextField;
 import org.cef.callback.CefAuthCallback;
 
 @SuppressWarnings("serial")
-public class PasswordDialog extends JDialog implements Runnable
+public class PasswordDialog extends JDialog
 {
 	private final JTextField username = new JTextField(20);
 	private final JPasswordField password = new JPasswordField(20);
@@ -63,11 +63,5 @@ public class PasswordDialog extends JDialog implements Runnable
 			}
 		});
 		add(okButton);
-	}
-
-	@Override
-	public void run()
-	{
-		setVisible(true);
 	}
 }

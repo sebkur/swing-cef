@@ -174,7 +174,10 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 			boolean isProxy, String host, int port, String realm, String scheme,
 			CefAuthCallback callback)
 	{
-		SwingUtilities.invokeLater(new PasswordDialog(owner, callback));
+		SwingUtilities.invokeLater(() -> {
+			PasswordDialog passwordDialog = new PasswordDialog(owner, callback);
+			passwordDialog.setVisible(true);
+		});
 		return true;
 	}
 
