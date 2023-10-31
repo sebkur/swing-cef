@@ -11,15 +11,15 @@ import javax.swing.JOptionPane;
 import org.cef.callback.CefCallback;
 import org.cef.handler.CefLoadHandler.ErrorCode;
 
-public class CertErrorDialog implements Runnable
+public class CertErrorDialog
 {
 	private final Frame owner;
 	private final ErrorCode certError;
 	private final String requestUrl;
 	private final CefCallback callback;
 
-	public CertErrorDialog(Frame owner, ErrorCode certError,
-			String requestUrl, CefCallback callback)
+	public CertErrorDialog(Frame owner, ErrorCode certError, String requestUrl,
+			CefCallback callback)
 	{
 		this.owner = owner;
 		this.certError = certError;
@@ -27,8 +27,7 @@ public class CertErrorDialog implements Runnable
 		this.callback = callback;
 	}
 
-	@Override
-	public void run()
+	public void display()
 	{
 		int dialogResult = JOptionPane.showConfirmDialog(owner,
 				"An certificate error (" + certError + ") occurreed "

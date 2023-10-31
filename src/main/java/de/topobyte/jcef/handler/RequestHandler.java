@@ -185,8 +185,11 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 	public boolean onCertificateError(CefBrowser browser, ErrorCode certError,
 			String requestUrl, CefCallback callback)
 	{
-		SwingUtilities.invokeLater(
-				new CertErrorDialog(owner, certError, requestUrl, callback));
+		SwingUtilities.invokeLater(() -> {
+			CertErrorDialog certErrorDialog = new CertErrorDialog(owner,
+					certError, requestUrl, callback);
+			certErrorDialog.display();
+		});
 		return true;
 	}
 
