@@ -9,8 +9,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,13 +50,9 @@ public class UrlRequestDialog extends JDialog
 	{
 		String url = urlField.getText();
 		if (url.isEmpty() || url.trim().equalsIgnoreCase("http://")) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run()
-				{
-					JOptionPane.showMessageDialog(owner,
-							"Please specify at least an URL. Otherwise the CefRequest is invalid");
-				}
+			SwingUtilities.invokeLater(() -> {
+				JOptionPane.showMessageDialog(owner,
+						"Please specify at least an URL. Otherwise the CefRequest is invalid");
 			});
 			return null;
 		}
@@ -89,13 +83,9 @@ public class UrlRequestDialog extends JDialog
 			postData = CefPostData.create();
 		} else if (method.equalsIgnoreCase("POST")
 				|| method.equalsIgnoreCase("PUT")) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run()
-				{
-					JOptionPane.showMessageDialog(owner,
-							"The methods POST and PUT require at least one row of data.");
-				}
+			SwingUtilities.invokeLater(() -> {
+				JOptionPane.showMessageDialog(owner,
+						"The methods POST and PUT require at least one row of data.");
 			});
 			return null;
 		}
@@ -237,32 +227,24 @@ public class UrlRequestDialog extends JDialog
 		centerPanel.add(postData);
 
 		JButton abortButton = new JButton("Abort");
-		abortButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				setVisible(false);
-				dispose();
-			}
+		abortButton.addActionListener(e -> {
+			setVisible(false);
+			dispose();
 		});
 
 		JButton sendButton = new JButton("Send");
-		sendButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				CefRequest request = createRequest();
-				if (request == null) {
-					return;
-				}
-
-				UrlRequestDialogReply handleRequest = new UrlRequestDialogReply(
-						owner, getTitle() + " - Result");
-				handleRequest.send(request);
-				handleRequest.setVisible(true);
-				setVisible(false);
-				dispose();
+		sendButton.addActionListener(e -> {
+			CefRequest request = createRequest();
+			if (request == null) {
+				return;
 			}
+
+			UrlRequestDialogReply handleRequest = new UrlRequestDialogReply(
+					owner, getTitle() + " - Result");
+			handleRequest.send(request);
+			handleRequest.setVisible(true);
+			setVisible(false);
+			dispose();
 		});
 
 		JPanel bottomPanel = new JPanel(new GridLayout(0, 2));
@@ -316,22 +298,14 @@ public class UrlRequestDialog extends JDialog
 
 		JPanel buttonPane = new JPanel(new GridLayout(0, 2));
 		JButton addButton = new JButton("Add entry");
-		addButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				localTblModel.newDefaultEntry();
-			}
+		addButton.addActionListener(e -> {
+			localTblModel.newDefaultEntry();
 		});
 		buttonPane.add(addButton);
 
 		JButton delButton = new JButton("Remove entry");
-		delButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				localTblModel.removeSelected();
-			}
+		delButton.addActionListener(e -> {
+			localTblModel.removeSelected();
 		});
 		buttonPane.add(delButton);
 

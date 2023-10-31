@@ -6,8 +6,6 @@ package de.topobyte.jcef.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -32,13 +30,9 @@ public class ShowTextDialog extends JDialog implements CefStringVisitor
 		JPanel controlPanel = new JPanel();
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
 		JButton doneButton = new JButton("Done");
-		doneButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				setVisible(false);
-				dispose();
-			}
+		doneButton.addActionListener(e -> {
+			setVisible(false);
+			dispose();
 		});
 		controlPanel.add(doneButton);
 

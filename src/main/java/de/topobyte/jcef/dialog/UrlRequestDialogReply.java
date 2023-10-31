@@ -7,8 +7,6 @@ package de.topobyte.jcef.dialog;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 
@@ -53,24 +51,16 @@ public class UrlRequestDialogReply extends JDialog
 		JPanel controlPanel = new JPanel();
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
 		JButton doneButton = new JButton("Done");
-		doneButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				urlRequest.dispose();
-				setVisible(false);
-				dispose();
-			}
+		doneButton.addActionListener(e -> {
+			urlRequest.dispose();
+			setVisible(false);
+			dispose();
 		});
 		controlPanel.add(doneButton);
 
-		cancelButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (urlRequest != null) {
-					urlRequest.cancel();
-				}
+		cancelButton.addActionListener(e -> {
+			if (urlRequest != null) {
+				urlRequest.cancel();
 			}
 		});
 		cancelButton.setEnabled(false);
@@ -128,23 +118,17 @@ public class UrlRequestDialogReply extends JDialog
 			final boolean printByteStream)
 	{
 		final Status status = urlRequest.getRequestStatus();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run()
-			{
-				statusLabel.setText("HTTP-Request status: " + status);
-				if (status != Status.UR_UNKNOWN
-						&& status != Status.UR_IO_PENDING) {
-					cancelButton.setEnabled(false);
-				}
-				repliedResult.append(updateMsg);
-				if (printByteStream) {
-					try {
-						repliedResult
-								.append("\n\n" + byteStream.toString("UTF-8"));
-					} catch (UnsupportedEncodingException e) {
-						repliedResult.append("\n\n" + byteStream.toString());
-					}
+		Runnable runnable = () -> {
+			statusLabel.setText("HTTP-Request status: " + status);
+			if (status != Status.UR_UNKNOWN && status != Status.UR_IO_PENDING) {
+				cancelButton.setEnabled(false);
+			}
+			repliedResult.append(updateMsg);
+			if (printByteStream) {
+				try {
+					repliedResult.append("\n\n" + byteStream.toString("UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					repliedResult.append("\n\n" + byteStream.toString());
 				}
 			}
 		};

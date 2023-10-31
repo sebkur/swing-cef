@@ -5,7 +5,6 @@
 package de.topobyte.jcef.ui;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -49,12 +48,8 @@ public class ControlPanel extends JPanel
 		backButton.setIcon(icon("icons/back.svg"));
 		backButton.setFocusable(false);
 		backButton.setAlignmentX(LEFT_ALIGNMENT);
-		backButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.goBack();
-			}
+		backButton.addActionListener(e -> {
+			browser.goBack();
 		});
 		add(backButton);
 		add(Box.createHorizontalStrut(5));
@@ -64,12 +59,8 @@ public class ControlPanel extends JPanel
 		forwardButton.setIcon(icon("icons/forward.svg"));
 		forwardButton.setFocusable(false);
 		forwardButton.setAlignmentX(LEFT_ALIGNMENT);
-		forwardButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.goForward();
-			}
+		forwardButton.addActionListener(e -> {
+			browser.goForward();
 		});
 		add(forwardButton);
 		add(Box.createHorizontalStrut(5));
@@ -79,24 +70,19 @@ public class ControlPanel extends JPanel
 		reloadButton.setIcon(icon("icons/refresh.svg"));
 		reloadButton.setFocusable(false);
 		reloadButton.setAlignmentX(LEFT_ALIGNMENT);
-		reloadButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (reloadButton.getText().equalsIgnoreCase("reload")) {
-					int mask = OS.isMacintosh() ? ActionEvent.META_MASK
-							: ActionEvent.CTRL_MASK;
-					if ((e.getModifiers() & mask) != 0) {
-						System.out
-								.println("Reloading - ignoring cached values");
-						browser.reloadIgnoreCache();
-					} else {
-						System.out.println("Reloading - using cached values");
-						browser.reload();
-					}
+		reloadButton.addActionListener(e -> {
+			if (reloadButton.getText().equalsIgnoreCase("reload")) {
+				int mask = OS.isMacintosh() ? ActionEvent.META_MASK
+						: ActionEvent.CTRL_MASK;
+				if ((e.getModifiers() & mask) != 0) {
+					System.out.println("Reloading - ignoring cached values");
+					browser.reloadIgnoreCache();
 				} else {
-					browser.stopLoad();
+					System.out.println("Reloading - using cached values");
+					browser.reload();
 				}
+			} else {
+				browser.stopLoad();
 			}
 		});
 		add(reloadButton);
@@ -104,12 +90,8 @@ public class ControlPanel extends JPanel
 
 		addressField = new HintTextField(100, "Type an address here");
 		addressField.setAlignmentX(LEFT_ALIGNMENT);
-		addressField.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.loadURL(getAddress());
-			}
+		addressField.addActionListener(e -> {
+			browser.loadURL(getAddress());
 		});
 		add(addressField);
 		add(Box.createHorizontalStrut(5));
@@ -119,32 +101,25 @@ public class ControlPanel extends JPanel
 		goButton.setIcon(icon("icons/return.svg"));
 		goButton.setFocusable(false);
 		goButton.setAlignmentX(LEFT_ALIGNMENT);
-		goButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.loadURL(getAddress());
-			}
+		goButton.addActionListener(e -> {
+			browser.loadURL(getAddress());
 		});
 		add(goButton);
 		add(Box.createHorizontalStrut(5));
+
+		zoomLabel = new JLabel("0.0");
 
 		JButton minusButton = new JButton();
 		minusButton.setToolTipText("Decrease zoom");
 		minusButton.setIcon(icon("icons/zoomOut.svg"));
 		minusButton.setFocusable(false);
 		minusButton.setAlignmentX(CENTER_ALIGNMENT);
-		minusButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.setZoomLevel(--zoomLevel);
-				zoomLabel.setText(Double.valueOf(zoomLevel).toString());
-			}
+		minusButton.addActionListener(e -> {
+			browser.setZoomLevel(--zoomLevel);
+			zoomLabel.setText(Double.valueOf(zoomLevel).toString());
 		});
 		add(minusButton);
 
-		zoomLabel = new JLabel("0.0");
 		add(zoomLabel);
 
 		JButton plusButton = new JButton("");
@@ -152,13 +127,9 @@ public class ControlPanel extends JPanel
 		plusButton.setIcon(icon("icons/zoomIn.svg"));
 		plusButton.setFocusable(false);
 		plusButton.setAlignmentX(CENTER_ALIGNMENT);
-		plusButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.setZoomLevel(++zoomLevel);
-				zoomLabel.setText(Double.valueOf(zoomLevel).toString());
-			}
+		plusButton.addActionListener(e -> {
+			browser.setZoomLevel(++zoomLevel);
+			zoomLabel.setText(Double.valueOf(zoomLevel).toString());
 		});
 		add(plusButton);
 	}

@@ -8,8 +8,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,28 +76,20 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler
 			controlPane.setBackground(bgColor);
 			dlAbort.setText("Abort");
 			dlAbort.setEnabled(false);
-			dlAbort.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					if (callback != null) {
-						fileName.setText("ABORTED - " + fileName.getText());
-						callback.cancel();
-					}
+			dlAbort.addActionListener(e -> {
+				if (callback != null) {
+					fileName.setText("ABORTED - " + fileName.getText());
+					callback.cancel();
 				}
 			});
 			controlPane.add(dlAbort);
 
 			dlRemoveEntry.setEnabled(false);
-			dlRemoveEntry.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					DownloadObject removed = downloadObjects.remove(identifier);
-					if (removed != null) {
-						downloadPanel.remove(removed);
-						dialog.repaint();
-					}
+			dlRemoveEntry.addActionListener(e -> {
+				DownloadObject removed = downloadObjects.remove(identifier);
+				if (removed != null) {
+					downloadPanel.remove(removed);
+					dialog.repaint();
 				}
 			});
 			controlPane.add(dlRemoveEntry);

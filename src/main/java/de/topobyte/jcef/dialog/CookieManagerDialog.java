@@ -6,8 +6,6 @@ package de.topobyte.jcef.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.Vector;
 
@@ -45,40 +43,27 @@ public class CookieManagerDialog extends JDialog
 		JPanel controlPanel = new JPanel();
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
 		JButton delButton = new JButton("Delete cookies");
-		delButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				tblModel.removeCookies();
-			}
+		delButton.addActionListener(e -> {
+			tblModel.removeCookies();
 		});
 		controlPanel.add(delButton);
 
 		JButton testCreateCookie = new JButton("Add test cookie");
-		testCreateCookie.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				Date now = new Date();
-				Date expires = new Date(now.getTime() + 86400000);
-				String name = "testNo" + testCookieId++;
-				CefCookie cookie = new CefCookie(name, "testCookie",
-						".test.cookie", "/", false, true, now, now, true,
-						expires);
-				if (manager.setCookie("http://my.test.cookie", cookie)) {
-					tblModel.visit(cookie, 1, 1, new BoolRef());
-				}
+		testCreateCookie.addActionListener(e -> {
+			Date now = new Date();
+			Date expires = new Date(now.getTime() + 86400000);
+			String name = "testNo" + testCookieId++;
+			CefCookie cookie = new CefCookie(name, "testCookie", ".test.cookie",
+					"/", false, true, now, now, true, expires);
+			if (manager.setCookie("http://my.test.cookie", cookie)) {
+				tblModel.visit(cookie, 1, 1, new BoolRef());
 			}
 		});
 		controlPanel.add(testCreateCookie);
 
 		JButton doneButton = new JButton("Done");
-		doneButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				setVisible(false);
-			}
+		doneButton.addActionListener(e -> {
+			setVisible(false);
 		});
 		controlPanel.add(doneButton);
 

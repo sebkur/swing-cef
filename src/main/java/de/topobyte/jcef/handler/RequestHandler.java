@@ -59,13 +59,9 @@ public class RequestHandler extends CefResourceRequestHandlerAdapter
 
 				String readString = new String(readBytes);
 				if (readString.indexOf("ignore") > -1) {
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run()
-						{
-							JOptionPane.showMessageDialog(owner,
-									"The request was rejected because you've entered \"ignore\" into the form.");
-						}
+					SwingUtilities.invokeLater(() -> {
+						JOptionPane.showMessageDialog(owner,
+								"The request was rejected because you've entered \"ignore\" into the form.");
 					});
 					return true;
 				}

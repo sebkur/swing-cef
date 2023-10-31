@@ -6,8 +6,6 @@ package de.topobyte.jcef.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -48,44 +46,32 @@ public class SearchDialog extends JDialog
 		controlPanel.add(Box.createHorizontalStrut(5));
 
 		JButton searchButton = new JButton("Search");
-		searchButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (searchField.getText() == null
-						|| searchField.getText().isEmpty()) {
-					return;
-				}
-
-				setTitle("Find \"" + searchField.getText() + "\"");
-				boolean matchCase = caseCheckBox.isSelected();
-				browser.find(searchField.getText(), true, matchCase, false);
-				prevButton.setEnabled(true);
-				nextButton.setEnabled(true);
+		searchButton.addActionListener(e -> {
+			if (searchField.getText() == null
+					|| searchField.getText().isEmpty()) {
+				return;
 			}
+
+			setTitle("Find \"" + searchField.getText() + "\"");
+			boolean matchCase = caseCheckBox.isSelected();
+			browser.find(searchField.getText(), true, matchCase, false);
+			prevButton.setEnabled(true);
+			nextButton.setEnabled(true);
 		});
 		controlPanel.add(searchButton);
 
-		prevButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				boolean matchCase = caseCheckBox.isSelected();
-				setTitle("Find \"" + searchField.getText() + "\"");
-				browser.find(searchField.getText(), false, matchCase, true);
-			}
+		prevButton.addActionListener(e -> {
+			boolean matchCase = caseCheckBox.isSelected();
+			setTitle("Find \"" + searchField.getText() + "\"");
+			browser.find(searchField.getText(), false, matchCase, true);
 		});
 		prevButton.setEnabled(false);
 		controlPanel.add(prevButton);
 
-		nextButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				boolean matchCase = caseCheckBox.isSelected();
-				setTitle("Find \"" + searchField.getText() + "\"");
-				browser.find(searchField.getText(), true, matchCase, true);
-			}
+		nextButton.addActionListener(e -> {
+			boolean matchCase = caseCheckBox.isSelected();
+			setTitle("Find \"" + searchField.getText() + "\"");
+			browser.find(searchField.getText(), true, matchCase, true);
 		});
 		nextButton.setEnabled(false);
 		controlPanel.add(nextButton);
@@ -93,13 +79,9 @@ public class SearchDialog extends JDialog
 		controlPanel.add(Box.createHorizontalStrut(50));
 
 		JButton doneButton = new JButton("Done");
-		doneButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				setVisible(false);
-				dispose();
-			}
+		doneButton.addActionListener(e -> {
+			setVisible(false);
+			dispose();
 		});
 		controlPanel.add(doneButton);
 

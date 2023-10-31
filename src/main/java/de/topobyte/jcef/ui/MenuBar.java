@@ -9,8 +9,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
@@ -102,201 +100,144 @@ public class MenuBar extends JMenuBar
 		JMenu fileMenu = new JMenu("File");
 
 		JMenuItem openFileItem = new JMenuItem("Open file...");
-		openFileItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0)
-			{
-				JFileChooser fc = new JFileChooser(
-						new File(lastSelectedFile));
-				// Show open dialog; this method does not return until the
-				// dialog is closed.
-				fc.showOpenDialog(owner);
-				File selectedFile = fc.getSelectedFile();
-				if (selectedFile != null) {
-					lastSelectedFile = selectedFile.getAbsolutePath();
-					browser.loadURL(
-							"file:///" + selectedFile.getAbsolutePath());
-				}
+		openFileItem.addActionListener(e -> {
+			JFileChooser fc = new JFileChooser(new File(lastSelectedFile));
+			// Show open dialog; this method does not return until the
+			// dialog is closed.
+			fc.showOpenDialog(owner);
+			File selectedFile = fc.getSelectedFile();
+			if (selectedFile != null) {
+				lastSelectedFile = selectedFile.getAbsolutePath();
+				browser.loadURL("file:///" + selectedFile.getAbsolutePath());
 			}
 		});
 		fileMenu.add(openFileItem);
 
 		JMenuItem openFileDialog = new JMenuItem("Save as...");
-		openFileDialog.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				CefRunFileDialogCallback callback = new CefRunFileDialogCallback() {
-					@Override
-					public void onFileDialogDismissed(Vector<String> filePaths)
-					{
-						if (!filePaths.isEmpty()) {
-							try {
-								SaveAs saveContent = new SaveAs(
-										filePaths.get(0));
-								browser.getSource(saveContent);
-							} catch (FileNotFoundException
-									| UnsupportedEncodingException e) {
-								browser.executeJavaScript(
-										"alert(\"Can't save file\");",
-										controlPane.getAddress(), 0);
-							}
+		openFileDialog.addActionListener(e -> {
+			CefRunFileDialogCallback callback = new CefRunFileDialogCallback() {
+				@Override
+				public void onFileDialogDismissed(Vector<String> filePaths)
+				{
+					if (!filePaths.isEmpty()) {
+						try {
+							SaveAs saveContent = new SaveAs(filePaths.get(0));
+							browser.getSource(saveContent);
+						} catch (FileNotFoundException
+								| UnsupportedEncodingException e) {
+							browser.executeJavaScript(
+									"alert(\"Can't save file\");",
+									controlPane.getAddress(), 0);
 						}
 					}
-				};
-				browser.runFileDialog(FileDialogMode.FILE_DIALOG_SAVE,
-						owner.getTitle(), "index.html", null, 0, callback);
-			}
+				}
+			};
+			browser.runFileDialog(FileDialogMode.FILE_DIALOG_SAVE,
+					owner.getTitle(), "index.html", null, 0, callback);
 		});
 		fileMenu.add(openFileDialog);
 
 		JMenuItem printItem = new JMenuItem("Print...");
-		printItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.print();
-			}
+		printItem.addActionListener(e -> {
+			browser.print();
 		});
 		fileMenu.add(printItem);
 
 		JMenuItem printToPdfItem = new JMenuItem("Print to PDF");
-		printToPdfItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				JFileChooser fc = new JFileChooser();
-				fc.showSaveDialog(owner);
-				File selectedFile = fc.getSelectedFile();
-				if (selectedFile != null) {
-					CefPdfPrintSettings pdfSettings = new CefPdfPrintSettings();
-					pdfSettings.display_header_footer = true;
-					// letter page size
-					pdfSettings.paper_width = 8.5;
-					pdfSettings.paper_height = 11;
-					browser.printToPDF(selectedFile.getAbsolutePath(),
-							pdfSettings, new CefPdfPrintCallback() {
-								@Override
-								public void onPdfPrintFinished(String path,
-										boolean ok)
-								{
-									SwingUtilities.invokeLater(new Runnable() {
-										@Override
-										public void run()
-										{
-											if (ok) {
-												JOptionPane.showMessageDialog(
-														owner,
-														"PDF saved to " + path,
-														"Success",
-														JOptionPane.INFORMATION_MESSAGE);
-											} else {
-												JOptionPane.showMessageDialog(
-														owner, "PDF failed",
-														"Failed",
-														JOptionPane.ERROR_MESSAGE);
-											}
-										}
-									});
-								}
-							});
-				}
+		printToPdfItem.addActionListener(e -> {
+			JFileChooser fc = new JFileChooser();
+			fc.showSaveDialog(owner);
+			File selectedFile = fc.getSelectedFile();
+			if (selectedFile != null) {
+				CefPdfPrintSettings pdfSettings = new CefPdfPrintSettings();
+				pdfSettings.display_header_footer = true;
+				// letter page size
+				pdfSettings.paper_width = 8.5;
+				pdfSettings.paper_height = 11;
+				browser.printToPDF(selectedFile.getAbsolutePath(), pdfSettings,
+						new CefPdfPrintCallback() {
+							@Override
+							public void onPdfPrintFinished(String path,
+									boolean ok)
+							{
+								SwingUtilities.invokeLater(() -> {
+									if (ok) {
+										JOptionPane.showMessageDialog(owner,
+												"PDF saved to " + path,
+												"Success",
+												JOptionPane.INFORMATION_MESSAGE);
+									} else {
+										JOptionPane.showMessageDialog(owner,
+												"PDF failed", "Failed",
+												JOptionPane.ERROR_MESSAGE);
+									}
+								});
+							}
+						});
 			}
 		});
 		fileMenu.add(printToPdfItem);
 
 		JMenuItem searchItem = new JMenuItem("Search...");
-		searchItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				new SearchDialog(owner, browser).setVisible(true);
-			}
+		searchItem.addActionListener(e -> {
+			new SearchDialog(owner, browser).setVisible(true);
 		});
 		fileMenu.add(searchItem);
 
 		fileMenu.addSeparator();
 
 		JMenuItem viewSource = new JMenuItem("View source");
-		viewSource.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.viewSource();
-			}
+		viewSource.addActionListener(e -> {
+			browser.viewSource();
 		});
 		fileMenu.add(viewSource);
 
 		JMenuItem getSource = new JMenuItem("Get source...");
-		getSource.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				ShowTextDialog visitor = new ShowTextDialog(owner,
-						"Source of \"" + controlPane.getAddress() + "\"");
-				browser.getSource(visitor);
-			}
+		getSource.addActionListener(e -> {
+			ShowTextDialog visitor = new ShowTextDialog(owner,
+					"Source of \"" + controlPane.getAddress() + "\"");
+			browser.getSource(visitor);
 		});
 		fileMenu.add(getSource);
 
 		JMenuItem getText = new JMenuItem("Get text...");
-		getText.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				ShowTextDialog visitor = new ShowTextDialog(owner,
-						"Content of \"" + controlPane.getAddress() + "\"");
-				browser.getText(visitor);
-			}
+		getText.addActionListener(e -> {
+			ShowTextDialog visitor = new ShowTextDialog(owner,
+					"Content of \"" + controlPane.getAddress() + "\"");
+			browser.getText(visitor);
 		});
 		fileMenu.add(getText);
 
 		fileMenu.addSeparator();
 
 		JMenuItem showDownloads = new JMenuItem("Show Downloads");
-		showDownloads.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				downloadDialog.setVisible(true);
-			}
+		showDownloads.addActionListener(e -> {
+			downloadDialog.setVisible(true);
 		});
 		fileMenu.add(showDownloads);
 
 		JMenuItem showCookies = new JMenuItem("Show Cookies");
-		showCookies.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				CookieManagerDialog cookieManager = new CookieManagerDialog(
-						owner, "Cookie Manager", MenuBar.this.cookieManager);
-				cookieManager.setVisible(true);
-			}
+		showCookies.addActionListener(e -> {
+			CookieManagerDialog cookieManagerDialog = new CookieManagerDialog(
+					owner, "Cookie Manager", cookieManager);
+			cookieManagerDialog.setVisible(true);
 		});
 		fileMenu.add(showCookies);
 
 		fileMenu.addSeparator();
 
 		JMenuItem exitItem = new JMenuItem("Exit");
-		exitItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				owner.dispatchEvent(
-						new WindowEvent(owner, WindowEvent.WINDOW_CLOSING));
-			}
+		exitItem.addActionListener(e -> {
+			owner.dispatchEvent(
+					new WindowEvent(owner, WindowEvent.WINDOW_CLOSING));
 		});
 		fileMenu.add(exitItem);
 
 		bookmarkMenu = new JMenu("Bookmarks");
 
 		JMenuItem addBookmarkItem = new JMenuItem("Add bookmark");
-		addBookmarkItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				addBookmark(owner.getTitle(), controlPane.getAddress());
-			}
+		addBookmarkItem.addActionListener(e -> {
+			addBookmark(owner.getTitle(), controlPane.getAddress());
 		});
 		bookmarkMenu.add(addBookmarkItem);
 		bookmarkMenu.addSeparator();
@@ -304,236 +245,173 @@ public class MenuBar extends JMenuBar
 		JMenu testMenu = new JMenu("Tests");
 
 		JMenuItem testJSItem = new JMenuItem("JavaScript alert");
-		testJSItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.executeJavaScript("alert('Hello World');",
-						controlPane.getAddress(), 1);
-			}
+		testJSItem.addActionListener(e -> {
+			browser.executeJavaScript("alert('Hello World');",
+					controlPane.getAddress(), 1);
 		});
 		testMenu.add(testJSItem);
 
 		JMenuItem jsAlertItem = new JMenuItem(
 				"JavaScript alert (will be suppressed)");
-		jsAlertItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.executeJavaScript("alert('Never displayed');",
-						"http://dontshow.me", 1);
-			}
+		jsAlertItem.addActionListener(e -> {
+			browser.executeJavaScript("alert('Never displayed');",
+					"http://dontshow.me", 1);
 		});
 		testMenu.add(jsAlertItem);
 
 		JMenuItem testShowText = new JMenuItem("Show Text");
-		testShowText.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.loadURL(DataUri.create("text/html",
-						"<html><body><h1>Hello World</h1></body></html>"));
-			}
+		testShowText.addActionListener(e -> {
+			browser.loadURL(DataUri.create("text/html",
+					"<html><body><h1>Hello World</h1></body></html>"));
 		});
 		testMenu.add(testShowText);
 
 		JMenuItem showForm = new JMenuItem("RequestHandler Test");
-		showForm.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				String form = "<html><head><title>RequestHandler test</title></head>";
-				form += "<body><h1>RequestHandler test</h1>";
-				form += "<form action=\"http://www.google.com/\" method=\"post\">";
-				form += "<input type=\"text\" name=\"searchFor\"/>";
-				form += "<input type=\"submit\"/><br/>";
-				form += "<input type=\"checkbox\" name=\"sendAsGet\"> Use GET instead of POST";
-				form += "<p>This form tries to send the content of the text field as HTTP-POST request to http://www.google.com.</p>";
-				form += "<h2>Testcase 1</h2>";
-				form += "Try to enter the word <b>\"ignore\"</b> into the text field and press \"submit\".<br />";
-				form += "The request will be rejected by the application.";
-				form += "<p>See implementation of <u>tests.RequestHandler.onBeforeBrowse(CefBrowser, CefRequest, boolean)</u> for details</p>";
-				form += "<h2>Testcase 2</h2>";
-				form += "Due Google doesn't allow the POST method, the server replies with a 405 error.</br>";
-				form += "If you activate the checkbox \"Use GET instead of POST\", the application will change the POST request into a GET request.";
-				form += "<p>See implementation of <u>tests.RequestHandler.onBeforeResourceLoad(CefBrowser, CefRequest)</u> for details</p>";
-				form += "</form>";
-				form += "</body></html>";
-				browser.loadURL(DataUri.create("text/html", form));
-			}
+		showForm.addActionListener(e -> {
+			String form = "<html><head><title>RequestHandler test</title></head>";
+			form += "<body><h1>RequestHandler test</h1>";
+			form += "<form action=\"http://www.google.com/\" method=\"post\">";
+			form += "<input type=\"text\" name=\"searchFor\"/>";
+			form += "<input type=\"submit\"/><br/>";
+			form += "<input type=\"checkbox\" name=\"sendAsGet\"> Use GET instead of POST";
+			form += "<p>This form tries to send the content of the text field as HTTP-POST request to http://www.google.com.</p>";
+			form += "<h2>Testcase 1</h2>";
+			form += "Try to enter the word <b>\"ignore\"</b> into the text field and press \"submit\".<br />";
+			form += "The request will be rejected by the application.";
+			form += "<p>See implementation of <u>tests.RequestHandler.onBeforeBrowse(CefBrowser, CefRequest, boolean)</u> for details</p>";
+			form += "<h2>Testcase 2</h2>";
+			form += "Due Google doesn't allow the POST method, the server replies with a 405 error.</br>";
+			form += "If you activate the checkbox \"Use GET instead of POST\", the application will change the POST request into a GET request.";
+			form += "<p>See implementation of <u>tests.RequestHandler.onBeforeResourceLoad(CefBrowser, CefRequest)</u> for details</p>";
+			form += "</form>";
+			form += "</body></html>";
+			browser.loadURL(DataUri.create("text/html", form));
 		});
 		testMenu.add(showForm);
 
 		JMenuItem httpRequest = new JMenuItem("Manual HTTP request");
-		httpRequest.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				String searchFor = JOptionPane.showInputDialog(owner,
-						"Search on google:");
-				if (searchFor != null && !searchFor.isEmpty()) {
-					CefRequest myRequest = CefRequest.create();
-					myRequest.setMethod("GET");
-					myRequest.setURL("http://www.google.com/#q=" + searchFor);
-					myRequest.setFirstPartyForCookies(
-							"http://www.google.com/#q=" + searchFor);
-					browser.loadRequest(myRequest);
-				}
+		httpRequest.addActionListener(e -> {
+			String searchFor = JOptionPane.showInputDialog(owner,
+					"Search on google:");
+			if (searchFor != null && !searchFor.isEmpty()) {
+				CefRequest myRequest = CefRequest.create();
+				myRequest.setMethod("GET");
+				myRequest.setURL("http://www.google.com/#q=" + searchFor);
+				myRequest.setFirstPartyForCookies(
+						"http://www.google.com/#q=" + searchFor);
+				browser.loadRequest(myRequest);
 			}
 		});
 		testMenu.add(httpRequest);
 
 		JMenuItem showInfo = new JMenuItem("Show Info");
-		showInfo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				String info = "<html><head><title>Browser status</title></head>";
-				info += "<body><h1>Browser status</h1><table border=\"0\">";
-				info += "<tr><td>CanGoBack</td><td>" + browser.canGoBack()
-						+ "</td></tr>";
-				info += "<tr><td>CanGoForward</td><td>" + browser.canGoForward()
-						+ "</td></tr>";
-				info += "<tr><td>IsLoading</td><td>" + browser.isLoading()
-						+ "</td></tr>";
-				info += "<tr><td>isPopup</td><td>" + browser.isPopup()
-						+ "</td></tr>";
-				info += "<tr><td>hasDocument</td><td>" + browser.hasDocument()
-						+ "</td></tr>";
-				info += "<tr><td>Url</td><td>" + browser.getURL()
-						+ "</td></tr>";
-				info += "<tr><td>Zoom-Level</td><td>" + browser.getZoomLevel()
-						+ "</td></tr>";
-				info += "</table></body></html>";
-				String js = "var x=window.open(); x.document.open(); x.document.write('"
-						+ info + "'); x.document.close();";
-				browser.executeJavaScript(js, "", 0);
-			}
+		showInfo.addActionListener(e -> {
+			String info = "<html><head><title>Browser status</title></head>";
+			info += "<body><h1>Browser status</h1><table border=\"0\">";
+			info += "<tr><td>CanGoBack</td><td>" + browser.canGoBack()
+					+ "</td></tr>";
+			info += "<tr><td>CanGoForward</td><td>" + browser.canGoForward()
+					+ "</td></tr>";
+			info += "<tr><td>IsLoading</td><td>" + browser.isLoading()
+					+ "</td></tr>";
+			info += "<tr><td>isPopup</td><td>" + browser.isPopup()
+					+ "</td></tr>";
+			info += "<tr><td>hasDocument</td><td>" + browser.hasDocument()
+					+ "</td></tr>";
+			info += "<tr><td>Url</td><td>" + browser.getURL() + "</td></tr>";
+			info += "<tr><td>Zoom-Level</td><td>" + browser.getZoomLevel()
+					+ "</td></tr>";
+			info += "</table></body></html>";
+			String js = "var x=window.open(); x.document.open(); x.document.write('"
+					+ info + "'); x.document.close();";
+			browser.executeJavaScript(js, "", 0);
 		});
 		testMenu.add(showInfo);
 
 		final JMenuItem showDevTools = new JMenuItem("Show DevTools");
-		showDevTools.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				DevToolsDialog devToolsDlg = new DevToolsDialog(owner,
-						"DEV Tools", browser);
-				devToolsDlg.addComponentListener(new ComponentAdapter() {
-					@Override
-					public void componentHidden(ComponentEvent e)
-					{
-						showDevTools.setEnabled(true);
-					}
-				});
-				devToolsDlg.setVisible(true);
-				showDevTools.setEnabled(false);
-			}
+		showDevTools.addActionListener(e -> {
+			DevToolsDialog devToolsDlg = new DevToolsDialog(owner, "DEV Tools",
+					browser);
+			devToolsDlg.addComponentListener(new ComponentAdapter() {
+				@Override
+				public void componentHidden(ComponentEvent e)
+				{
+					showDevTools.setEnabled(true);
+				}
+			});
+			devToolsDlg.setVisible(true);
+			showDevTools.setEnabled(false);
 		});
 		testMenu.add(showDevTools);
 
 		JMenuItem testURLRequest = new JMenuItem("URL Request");
-		testURLRequest.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				UrlRequestDialog dlg = new UrlRequestDialog(owner,
-						"URL Request Test");
-				dlg.setVisible(true);
-			}
+		testURLRequest.addActionListener(e -> {
+			UrlRequestDialog dlg = new UrlRequestDialog(owner,
+					"URL Request Test");
+			dlg.setVisible(true);
 		});
 		testMenu.add(testURLRequest);
 
 		JMenuItem reparent = new JMenuItem("Reparent");
-		reparent.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				final BrowserFrame newFrame = new BrowserFrame("New Window");
-				newFrame.setLayout(new BorderLayout());
-				final JButton reparentButton = new JButton("Reparent <");
-				reparentButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						if (reparentPending) {
-							return;
-						}
-						reparentPending = true;
+		reparent.addActionListener(e1 -> {
+			final BrowserFrame newFrame = new BrowserFrame("New Window");
+			newFrame.setLayout(new BorderLayout());
+			final JButton reparentButton = new JButton("Reparent <");
+			reparentButton.addActionListener(e2 -> {
+				if (reparentPending) {
+					return;
+				}
+				reparentPending = true;
 
-						if (reparentButton.getText().equals("Reparent <")) {
-							owner.removeBrowser(new Runnable() {
-								@Override
-								public void run()
-								{
-									newFrame.add(browser.getUIComponent(),
-											BorderLayout.CENTER);
-									newFrame.setBrowser(browser);
-									reparentButton.setText("Reparent >");
-									reparentPending = false;
-								}
-							});
-						} else {
-							newFrame.removeBrowser(new Runnable() {
-								@Override
-								public void run()
-								{
-									JRootPane rootPane = (JRootPane) owner
-											.getComponent(0);
-									Container container = rootPane
-											.getContentPane();
-									JPanel panel = (JPanel) container
-											.getComponent(0);
-									panel.add(browser.getUIComponent());
-									owner.setBrowser(browser);
-									owner.revalidate();
-									reparentButton.setText("Reparent <");
-									reparentPending = false;
-								}
-							});
-						}
-					}
-				});
-				newFrame.add(reparentButton, BorderLayout.NORTH);
-				newFrame.setSize(400, 400);
-				newFrame.setVisible(true);
-			}
+				if (reparentButton.getText().equals("Reparent <")) {
+					owner.removeBrowser(() -> {
+						newFrame.add(browser.getUIComponent(),
+								BorderLayout.CENTER);
+						newFrame.setBrowser(browser);
+						reparentButton.setText("Reparent >");
+						reparentPending = false;
+					});
+				} else {
+					newFrame.removeBrowser(() -> {
+						JRootPane rootPane = (JRootPane) owner.getComponent(0);
+						Container container = rootPane.getContentPane();
+						JPanel panel = (JPanel) container.getComponent(0);
+						panel.add(browser.getUIComponent());
+						owner.setBrowser(browser);
+						owner.revalidate();
+						reparentButton.setText("Reparent <");
+						reparentPending = false;
+					});
+				}
+			});
+			newFrame.add(reparentButton, BorderLayout.NORTH);
+			newFrame.setSize(400, 400);
+			newFrame.setVisible(true);
 		});
 		testMenu.add(reparent);
 
 		JMenuItem newwindow = new JMenuItem("New window");
-		newwindow.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				final MainFrame frame = new MainFrame(MainFrame.cefApp,
-						OS.isLinux(), false, false, null);
-				frame.setSize(800, 600);
-				frame.setVisible(true);
-			}
+		newwindow.addActionListener(e -> {
+			final MainFrame frame = new MainFrame(MainFrame.cefApp,
+					OS.isLinux(), false, false, null);
+			frame.setSize(800, 600);
+			frame.setVisible(true);
 		});
 		testMenu.add(newwindow);
 
 		JMenuItem screenshotSync = new JMenuItem(
 				"Screenshot (on AWT thread, native res)");
-		screenshotSync.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				long start = System.nanoTime();
-				CompletableFuture<BufferedImage> shot = browser
-						.createScreenshot(true);
-				System.out
-						.println(
-								"Took screenshot from the AWT event thread in "
-										+ TimeUnit.NANOSECONDS.toMillis(
-												System.nanoTime() - start)
-										+ " msecs");
-				try {
-					displayScreenshot(shot.get());
-				} catch (InterruptedException | ExecutionException exc) {
-					// cannot happen, future is already resolved in this case
-				}
+		screenshotSync.addActionListener(e -> {
+			long start = System.nanoTime();
+			CompletableFuture<BufferedImage> shot = browser
+					.createScreenshot(true);
+			System.out.println("Took screenshot from the AWT event thread in "
+					+ TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
+					+ " msecs");
+			try {
+				displayScreenshot(shot.get());
+			} catch (InterruptedException | ExecutionException exc) {
+				// cannot happen, future is already resolved in this case
 			}
 		});
 		screenshotSync.setEnabled(owner.isOsrEnabled());
@@ -541,24 +419,17 @@ public class MenuBar extends JMenuBar
 
 		JMenuItem screenshotSyncScaled = new JMenuItem(
 				"Screenshot (on AWT thread, scaled)");
-		screenshotSyncScaled.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				long start = System.nanoTime();
-				CompletableFuture<BufferedImage> shot = browser
-						.createScreenshot(false);
-				System.out
-						.println(
-								"Took screenshot from the AWT event thread in "
-										+ TimeUnit.NANOSECONDS.toMillis(
-												System.nanoTime() - start)
-										+ " msecs");
-				try {
-					displayScreenshot(shot.get());
-				} catch (InterruptedException | ExecutionException exc) {
-					// cannot happen, future is already resolved in this case
-				}
+		screenshotSyncScaled.addActionListener(e -> {
+			long start = System.nanoTime();
+			CompletableFuture<BufferedImage> shot = browser
+					.createScreenshot(false);
+			System.out.println("Took screenshot from the AWT event thread in "
+					+ TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
+					+ " msecs");
+			try {
+				displayScreenshot(shot.get());
+			} catch (InterruptedException | ExecutionException exc) {
+				// cannot happen, future is already resolved in this case
 			}
 		});
 		screenshotSyncScaled.setEnabled(owner.isOsrEnabled());
@@ -566,28 +437,21 @@ public class MenuBar extends JMenuBar
 
 		JMenuItem screenshotAsync = new JMenuItem(
 				"Screenshot (from other thread, scaled)");
-		screenshotAsync.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				long start = System.nanoTime();
-				CompletableFuture<BufferedImage> shot = browser
-						.createScreenshot(false);
-				shot.thenAccept((image) -> {
-					System.out
-							.println("Took screenshot asynchronously in "
-									+ TimeUnit.NANOSECONDS
-											.toMillis(System.nanoTime() - start)
-									+ " msecs");
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run()
-						{
-							displayScreenshot(image);
-						}
-					});
+		screenshotAsync.addActionListener(e -> {
+			long start = System.nanoTime();
+			CompletableFuture<BufferedImage> shot = browser
+					.createScreenshot(false);
+			shot.thenAccept((image) -> {
+				System.out
+						.println(
+								"Took screenshot asynchronously in "
+										+ TimeUnit.NANOSECONDS.toMillis(
+												System.nanoTime() - start)
+										+ " msecs");
+				SwingUtilities.invokeLater(() -> {
+					displayScreenshot(image);
 				});
-			}
+			});
 		});
 		screenshotAsync.setEnabled(owner.isOsrEnabled());
 		testMenu.add(screenshotAsync);
@@ -619,12 +483,8 @@ public class MenuBar extends JMenuBar
 
 		JMenuItem menuItem = new JMenuItem(name);
 		menuItem.setActionCommand(URL);
-		menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				browser.loadURL(e.getActionCommand());
-			}
+		menuItem.addActionListener(e -> {
+			browser.loadURL(e.getActionCommand());
 		});
 		bookmarkMenu.add(menuItem);
 		validate();

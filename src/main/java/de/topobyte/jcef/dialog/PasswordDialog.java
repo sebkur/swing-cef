@@ -6,8 +6,6 @@ package de.topobyte.jcef.dialog;
 
 import java.awt.Frame;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -36,31 +34,23 @@ public class PasswordDialog extends JDialog
 		add(password);
 
 		JButton abortButton = new JButton("Abort");
-		abortButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				callback.cancel();
-				setVisible(false);
-				dispose();
-			}
+		abortButton.addActionListener(e -> {
+			callback.cancel();
+			setVisible(false);
+			dispose();
 		});
 		add(abortButton);
 
 		JButton okButton = new JButton("OK");
-		okButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (username.getText().isEmpty()) {
-					return;
-				}
-				String password = new String(
-						PasswordDialog.this.password.getPassword());
-				callback.Continue(username.getText(), password);
-				setVisible(false);
-				dispose();
+		okButton.addActionListener(e -> {
+			if (username.getText().isEmpty()) {
+				return;
 			}
+			String password = new String(
+					PasswordDialog.this.password.getPassword());
+			callback.Continue(username.getText(), password);
+			setVisible(false);
+			dispose();
 		});
 		add(okButton);
 	}
