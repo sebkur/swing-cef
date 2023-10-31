@@ -8,9 +8,12 @@ import java.awt.BorderLayout;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import org.cef.CefApp;
@@ -114,6 +117,13 @@ public class MainFrame extends BrowserFrame
 		// frame.
 		final MainFrame frame = new MainFrame(cefApp, osrEnabledArg,
 				transparentPaintingEnabledArg, createImmediately, args);
+		try (InputStream input = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("icon.png")) {
+			BufferedImage image = ImageIO.read(input);
+			frame.setIconImage(image);
+		} catch (IOException e) {
+			// ignore, continue without icon
+		}
 		frame.setSize((int) (800 * factor), (int) (600 * factor));
 		frame.setVisible(true);
 	}
@@ -201,8 +211,7 @@ public class MainFrame extends BrowserFrame
 			public void onLoadingStateChange(CefBrowser browser,
 					boolean isLoading, boolean canGoBack, boolean canGoForward)
 			{
-				controlPane.update(browser, isLoading, canGoBack,
-						canGoForward);
+				controlPane.update(browser, isLoading, canGoBack, canGoForward);
 				statusPanel.setIsInProgress(isLoading);
 
 				if (!isLoading && !errorMsg.isEmpty()) {

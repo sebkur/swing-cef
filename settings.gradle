@@ -1,1 +1,19 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = "https://maven.pkg.jetbrains.space/public/p/compose/dev" }
+        google()
+        maven { url = "https://mvn.topobyte.de" }
+    }
+
+    plugins {
+        def kotlinVersion = getProperty("kotlin.version")
+        def pinpitVersion = getProperty("pinpit.version")
+        def versionAccessVersion = getProperty("version.access.version")
+        id 'org.jetbrains.kotlin.jvm' version kotlinVersion
+        id 'de.mobanisto.pinpit' version pinpitVersion
+        id 'de.topobyte.version-access-gradle-plugin' version versionAccessVersion
+    }
+}
+
 rootProject.name = pName

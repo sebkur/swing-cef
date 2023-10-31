@@ -1,25 +1,31 @@
+buildscript {
+    repositories {
+        maven { url 'https://mvn.topobyte.de' }
+    }
+}
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'de.mobanisto.pinpit'
+    id 'de.topobyte.version-access-gradle-plugin'
+}
+
 wrapper {
     gradleVersion = '7.6.3'
 }
 
-apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
-group = pGroup
 version = pVersion
 
-if (project.hasProperty("topobyte")) {
-    apply from: 'file:///' + System.getProperty("user.home") \
-        + '/.gradle/topobyte.gradle'
+generateVersionAccessSource {
+    packageName = "de.mobanisto.jcef"
 }
 
 repositories {
     maven {
         url 'https://mvn.topobyte.de'
-    }
-    maven {
-        url 'https://mvn.slimjars.com'
     }
     mavenCentral()
 }
@@ -27,36 +33,121 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+configurations {
+    currentOs {
+        extendsFrom implementation
+    }
+    windowsX64 {
+        extendsFrom implementation
+    }
+    linuxX64 {
+        extendsFrom implementation
+    }
+    linuxArm64 {
+        extendsFrom implementation
+    }
+    macosX64 {
+        extendsFrom implementation
+    }
+    macosArm64 {
+        extendsFrom implementation
+    }
+}
+
 dependencies {
     implementation 'me.friwi:jcefmaven:110.0.25.1'
-    implementation 'me.friwi:jcef-natives-linux-amd64:jcef-87476e9+cef-110.0.25+g75b1c96+chromium-110.0.5481.78'
+    linuxX64 'me.friwi:jcef-natives-linux-amd64:jcef-87476e9+cef-110.0.25+g75b1c96+chromium-110.0.5481.78'
+    windowsX64 "me.friwi:jcef-natives-windows-amd64:jcef-87476e9+cef-110.0.25+g75b1c96+chromium-110.0.5481.78"
+    macosX64 "me.friwi:jcef-natives-macosx-amd64:jcef-87476e9+cef-110.0.25+g75b1c96+chromium-110.0.5481.78"
+    macosArm64 "me.friwi:jcef-natives-macosx-arm64:jcef-87476e9+cef-110.0.25+g75b1c96+chromium-110.0.5481.78"
     // this version doesn't work on my Linux system, requires newer libc?
     //implementation 'me.friwi:jcefmaven:116.0.19'
-    //implementation 'me.friwi:jcef-natives-linux-amd64:jcef-37f25dc+cef-116.0.19+gc6a20bc+chromium-116.0.5845.141'
+    //linuxX64 'me.friwi:jcef-natives-linux-amd64:jcef-37f25dc+cef-116.0.19+gc6a20bc+chromium-116.0.5845.141'
     implementation 'de.topobyte:shared-preferences:0.1.0'
     implementation 'de.topobyte:swing-utils:0.0.13'
     implementation 'com.formdev:flatlaf:3.2.5'
     implementation 'com.formdev:flatlaf-extras:3.2.5'
 }
 
-task copyJars(type: Copy) {
-    into "$buildDir/lib-run"
-    from jar
+sourceSets {
+    main {
+        java {
+            compileClasspath += configurations.currentOs
+            runtimeClasspath += configurations.currentOs
+        }
+    }
 }
 
-task copyDeps(type: Copy) {
-    into "$buildDir/lib-run"
-    from configurations.runtimeClasspath
-}
+pinpit.desktop {
+    application {
+        mainClass = "de.topobyte.jcef.MainFrame"
+        nativeDistributions {
+            jvmVendor = "adoptium"
+            jvmVersion = "17.0.8.1+1"
 
-task createRuntime(dependsOn: [copyJars, copyDeps]) {
-    description 'Setup the execution environment for the main scripts'
-}
+            packageName = "Swing CEF"
+            packageVersion = version
+            description = "Swing CEF - a CEF-based web browser"
+            vendor = "Mobanisto UG (haftungsbeschränkt)"
+            copyright = "2023 Mobanisto UG (haftungsbeschränkt)"
+            licenseFile.set(project.file("src/main/packaging/LICENSE.txt"))
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
+            linux {
+                packageName = "swing-cef"
+                debMaintainer = "jon@example.com"
+                debPackageVersion = version
+                appCategory = "utils"
+                menuGroup = "Utility"
+                iconFile.set(project.file("src/main/packaging/linux/icon.png"))
+                debPreInst.set(project.file("src/main/packaging/linux/deb/preinst"))
+                debPostInst.set(project.file("src/main/packaging/linux/deb/postinst"))
+                debPreRm.set(project.file("src/main/packaging/linux/deb/prerm"))
+                debCopyright.set(project.file("src/main/packaging/linux/deb/copyright"))
+                debLauncher.set(project.file("src/main/packaging/linux/deb/launcher.desktop"))
+                deb("UbuntuFocalX64") {
+                    qualifier = "ubuntu-20.04"
+                    arch = "x64"
+                    depends(
+                        "libc6", "libexpat1", "libgcc-s1", "libpcre3", "libuuid1", "xdg-utils",
+                        "zlib1g", "libnotify4"
+                    )
+                }
+                distributableArchive {
+                    format = "tar.gz"
+                    arch = "x64"
+                }
+            }
+            windows {
+                dirChooser = true
+                shortcut = true
+                menuGroup = "Mobanisto UG (haftungsbeschränkt)"
+                upgradeUuid = "FCF5A773-AF8B-4570-9DD4-27B2D5951B46"
+                packageVersion = version
+                iconFile.set(project.file("src/main/packaging/windows/icon.ico"))
+                aumid = "Mobanisto.Swing.CEF"
+                msi {
+                    arch = "x64"
+                    bitmapBanner.set(project.file("src/main/packaging/windows/banner.bmp"))
+                    bitmapDialog.set(project.file("src/main/packaging/windows/dialog.bmp"))
+                }
+                distributableArchive {
+                    format = "zip"
+                    arch = "x64"
+                }
+            }
+            macOS {
+                iconFile.set(project.file("src/main/packaging/macos/icon.icns"))
+                bundleID = "de.mobanisto.jcef.swing.cef"
+                appCategory = "public.app-category.productivity"
+                distributableArchive {
+                    format = "zip"
+                    arch = "x64"
+                }
+                distributableArchive {
+                    format = "zip"
+                    arch = "arm64"
+                }
+            }
         }
     }
 }
