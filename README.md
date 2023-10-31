@@ -8,6 +8,10 @@ Package installers:
 
     ./gradlew pinpitPackageDefault
 
+Run the application in test mode:
+
+    ./gradlew pinpitRun --args="--test"
+
 This project has been created using [pinpit](https://github.com/mobanisto/pinpit):
 
 ```

@@ -83,25 +83,31 @@ public class MenuBar extends JMenuBar
 	private final ControlPanel controlPane;
 	private final DownloadDialog downloadDialog;
 	private final CefCookieManager cookieManager;
+	private final boolean test;
 	private boolean reparentPending = false;
 
 	public MenuBar(MainFrame owner, CefBrowser browser,
 			ControlPanel controlPane, DownloadDialog downloadDialog,
-			CefCookieManager cookieManager)
+			CefCookieManager cookieManager, boolean test)
 	{
 		this.owner = owner;
 		this.browser = browser;
 		this.controlPane = controlPane;
 		this.downloadDialog = downloadDialog;
 		this.cookieManager = cookieManager;
+		this.test = test;
 
 		setEnabled(browser != null);
 
 		bookmarkMenu = new JMenu("Bookmarks");
-		addItems();
+		addFileMenu();
+		addBookmarksMenu();
+		if (test) {
+			addTestsMenu();
+		}
 	}
 
-	private void addItems()
+	private void addFileMenu()
 	{
 		JMenu fileMenu = new JMenu("File");
 
@@ -239,6 +245,11 @@ public class MenuBar extends JMenuBar
 		});
 		fileMenu.add(exitItem);
 
+		add(fileMenu);
+	}
+
+	private void addBookmarksMenu()
+	{
 		JMenuItem addBookmarkItem = new JMenuItem("Add bookmark");
 		addBookmarkItem.addActionListener(e -> {
 			addBookmark(owner.getTitle(), controlPane.getAddress());
@@ -246,6 +257,11 @@ public class MenuBar extends JMenuBar
 		bookmarkMenu.add(addBookmarkItem);
 		bookmarkMenu.addSeparator();
 
+		add(bookmarkMenu);
+	}
+
+	private void addTestsMenu()
+	{
 		JMenu testMenu = new JMenu("Tests");
 
 		JMenuItem testJSItem = new JMenuItem("JavaScript alert");
@@ -397,7 +413,7 @@ public class MenuBar extends JMenuBar
 		JMenuItem newwindow = new JMenuItem("New window");
 		newwindow.addActionListener(e -> {
 			final MainFrame frame = new MainFrame(MainFrame.cefApp,
-					OS.isLinux(), false, false, null);
+					OS.isLinux(), false, false, test);
 			frame.setSize(800, 600);
 			frame.setVisible(true);
 		});
@@ -460,8 +476,6 @@ public class MenuBar extends JMenuBar
 		screenshotAsync.setEnabled(owner.isOsrEnabled());
 		testMenu.add(screenshotAsync);
 
-		add(fileMenu);
-		add(bookmarkMenu);
 		add(testMenu);
 	}
 

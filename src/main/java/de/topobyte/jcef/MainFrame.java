@@ -59,6 +59,13 @@ public class MainFrame extends BrowserFrame
 			throws IOException, UnsupportedPlatformException,
 			InterruptedException, CefInitializationException
 	{
+		boolean test = false;
+		for (String arg : args) {
+			if (arg.equals("--test")) {
+				test = true;
+			}
+		}
+
 		double factor = 1;
 		if (SharedPreferences.isUIScalePresent()) {
 			SwingUtils.setUiScale(SharedPreferences.getUIScale());
@@ -116,7 +123,7 @@ public class MainFrame extends BrowserFrame
 		// MainFrame keeps all the knowledge to display the embedded browser
 		// frame.
 		final MainFrame frame = new MainFrame(cefApp, osrEnabledArg,
-				transparentPaintingEnabledArg, createImmediately, args);
+				transparentPaintingEnabledArg, createImmediately, test);
 		try (InputStream input = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("icon.png")) {
 			BufferedImage image = ImageIO.read(input);
@@ -138,7 +145,7 @@ public class MainFrame extends BrowserFrame
 
 	public MainFrame(CefApp myApp, boolean osrEnabled,
 			boolean transparentPaintingEnabled, boolean createImmediately,
-			String[] args)
+			boolean test)
 	{
 		this.osrEnabled = osrEnabled;
 		this.transparentPaintingEnabled = transparentPaintingEnabled;
@@ -292,34 +299,38 @@ public class MainFrame extends BrowserFrame
 		contentPanel.add(getBrowser().getUIComponent(), BorderLayout.CENTER);
 
 		MenuBar menuBar = new MenuBar(this, browser, controlPane,
-				downloadDialog, CefCookieManager.getGlobalManager());
+				downloadDialog, CefCookieManager.getGlobalManager(), test);
 
-		menuBar.addBookmark("Binding Test", "client://tests/binding_test.html");
-		menuBar.addBookmark("Binding Test 2",
-				"client://tests/binding_test2.html");
-		menuBar.addBookmark("Download Test",
-				"https://cef-builds.spotifycdn.com/index.html");
-		menuBar.addBookmark("Login Test (username:pumpkin, password:pie)",
-				"http://www.colostate.edu/~ric/protect/your.html");
-		menuBar.addBookmark("Certificate-error Test", "https://www.k2go.de");
-		menuBar.addBookmark("Resource-Handler Test", "http://www.foo.bar/");
-		menuBar.addBookmark("Resource-Handler Set Error Test",
-				"http://seterror.test/");
-		menuBar.addBookmark("Scheme-Handler Test 1: (scheme \"client\")",
-				"client://tests/handler.html");
-		menuBar.addBookmark("Scheme-Handler Test 2: (scheme \"search\")",
-				"search://do a barrel roll/");
-		menuBar.addBookmark("Spellcheck Test",
-				"client://tests/spellcheck.html");
-		menuBar.addBookmark("LocalStorage Test",
-				"client://tests/localstorage.html");
-		menuBar.addBookmark("Transparency Test",
-				"client://tests/transparency.html");
-		menuBar.addBookmarkSeparator();
-		menuBar.addBookmark("javachromiumembedded",
-				"https://bitbucket.org/chromiumembedded/java-cef");
-		menuBar.addBookmark("chromiumembedded",
-				"https://bitbucket.org/chromiumembedded/cef");
+		if (test) {
+			menuBar.addBookmark("Binding Test",
+					"client://tests/binding_test.html");
+			menuBar.addBookmark("Binding Test 2",
+					"client://tests/binding_test2.html");
+			menuBar.addBookmark("Download Test",
+					"https://cef-builds.spotifycdn.com/index.html");
+			menuBar.addBookmark("Login Test (username:pumpkin, password:pie)",
+					"http://www.colostate.edu/~ric/protect/your.html");
+			menuBar.addBookmark("Certificate-error Test",
+					"https://www.k2go.de");
+			menuBar.addBookmark("Resource-Handler Test", "http://www.foo.bar/");
+			menuBar.addBookmark("Resource-Handler Set Error Test",
+					"http://seterror.test/");
+			menuBar.addBookmark("Scheme-Handler Test 1: (scheme \"client\")",
+					"client://tests/handler.html");
+			menuBar.addBookmark("Scheme-Handler Test 2: (scheme \"search\")",
+					"search://do a barrel roll/");
+			menuBar.addBookmark("Spellcheck Test",
+					"client://tests/spellcheck.html");
+			menuBar.addBookmark("LocalStorage Test",
+					"client://tests/localstorage.html");
+			menuBar.addBookmark("Transparency Test",
+					"client://tests/transparency.html");
+			menuBar.addBookmarkSeparator();
+			menuBar.addBookmark("javachromiumembedded",
+					"https://bitbucket.org/chromiumembedded/java-cef");
+			menuBar.addBookmark("chromiumembedded",
+					"https://bitbucket.org/chromiumembedded/cef");
+		}
 		setJMenuBar(menuBar);
 	}
 
