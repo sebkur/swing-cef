@@ -20,12 +20,10 @@ public class PasswordDialog extends JDialog
 {
 	private final JTextField username = new JTextField(20);
 	private final JPasswordField password = new JPasswordField(20);
-	private final CefAuthCallback callback;
 
 	public PasswordDialog(Frame owner, CefAuthCallback callback)
 	{
 		super(owner, "Authentication required", true);
-		this.callback = callback;
 		setSize(400, 100);
 		setLayout(new GridLayout(0, 2));
 		add(new JLabel("Username:"));

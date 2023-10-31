@@ -97,6 +97,12 @@ public class MenuBar extends JMenuBar
 
 		setEnabled(browser != null);
 
+		bookmarkMenu = new JMenu("Bookmarks");
+		addItems();
+	}
+
+	private void addItems()
+	{
 		JMenu fileMenu = new JMenu("File");
 
 		JMenuItem openFileItem = new JMenuItem("Open file...");
@@ -232,8 +238,6 @@ public class MenuBar extends JMenuBar
 					new WindowEvent(owner, WindowEvent.WINDOW_CLOSING));
 		});
 		fileMenu.add(exitItem);
-
-		bookmarkMenu = new JMenu("Bookmarks");
 
 		JMenuItem addBookmarkItem = new JMenuItem("Add bookmark");
 		addBookmarkItem.addActionListener(e -> {
