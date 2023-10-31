@@ -1,6 +1,6 @@
 # Swing CEF
 
-Then you can run the application:
+Run the application:
 
     ./gradlew pinpitRun
 
